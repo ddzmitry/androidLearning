@@ -5,18 +5,21 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
 
     public void clickFunction(View view){
         // Get element by id cast it as EditText
-        EditText UserNameText = (EditText) findViewById(R.id.UserNameText);
-        EditText PaswordNameText = (EditText) findViewById(R.id.PasswordNameText);
+        EditText UserNameText =  findViewById(R.id.UserNameText);
+        EditText PaswordNameText =  findViewById(R.id.PasswordNameText);
         System.out.println(view);
         Log.i("Info","clickFunciton was clicked");
         Log.i("username", UserNameText.getText().toString());
         Log.i("password", PaswordNameText.getText().toString());
+
+        Toast.makeText(this, String.format("Hello \n %s",UserNameText.getText().toString()), Toast.LENGTH_SHORT).show();
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
