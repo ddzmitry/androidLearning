@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="dev.ddzmitry.gridexample.MainActivity">
+
+    <GridLayout
+        android:id="@+id/gridLayout"
+        android:layout_width="365dp"
+        android:layout_height="434dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:columnCount="2"
+        android:rowCount="4"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <Button
+            android:id="@+id/welcome"
+            android:layout_columnWeight="1"
+            android:layout_gravity="fill"
+            android:layout_rowWeight="1"
+            android:onClick="translateMe"
+            android:tag="welcome"
+            android:text="Welcome" />
+
+        <Button
+            android:id="@+id/please"
+            android:layout_columnWeight="1"
+            android:layout_gravity="fill"
+            android:layout_rowWeight="1"
+            android:onClick="translateMe"
+            android:tag="please"
+            android:text="Please" />
+
+        <Button
+            android:id="@+id/mynameis"
+            android:layout_columnWeight="1"
+            android:layout_gravity="fill"
+            android:layout_rowWeight="1"
+            android:onClick="translateMe"
+            android:text="My name is ..." />
+
+        <Button
+            android:id="@+id/ilivein"
+            android:layout_columnWeight="1"
+            android:layout_gravity="fill"
+            android:layout_rowWeight="1"
+            android:onClick="translateMe"
+            android:tag="ilivein"
+            android:text="I live in ..." />
+
+        <Button
+            android:id="@+id/howareyou"
+            android:layout_columnWeight="1"
+            android:layout_gravity="fill"
+            android:layout_rowWeight="1"
+            android:onClick="translateMe"
+            android:tag="howareyou"
+            android:text="How are you" />
+
+        <Button
+            android:id="@+id/hello"
+            android:layout_columnWeight="1"
+            android:layout_gravity="fill"
+            android:layout_rowWeight="1"
+            android:onClick="translateMe"
+            android:tag="hello"
+            android:text="Hello" />
+
+        <Button
+            android:id="@+id/goodevening"
+            android:layout_columnWeight="1"
+            android:layout_gravity="fill"
+            android:layout_rowWeight="1"
+            android:onClick="translateMe"
+            android:tag="goodevening"
+            android:text="Good Evening" />
+
+        <Button
+            android:id="@+id/doyouspeakenglish"
+            android:layout_columnWeight="1"
+            android:layout_gravity="fill"
+            android:layout_rowWeight="1"
+            android:onClick="translateMe"
+            android:tag="doyouspeakenglish"
+            android:text="Do you speak English?" />
+
+
+    </GridLayout>
+
+    <SeekBar
+        android:id="@+id/VolumeSeek"
+        android:layout_width="381dp"
+        android:layout_height="25dp"
+        android:layout_marginBottom="18dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="3dp"
+        app:layout_constraintBottom_toTopOf="@+id/gridLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+</android.support.constraint.ConstraintLayout>
