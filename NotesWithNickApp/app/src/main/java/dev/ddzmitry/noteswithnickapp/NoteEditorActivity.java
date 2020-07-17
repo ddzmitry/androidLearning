@@ -1,11 +1,15 @@
 package dev.ddzmitry.noteswithnickapp;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.EditText;
+
+import java.util.HashSet;
 
 public class NoteEditorActivity extends AppCompatActivity {
     int noteId;
@@ -42,6 +46,13 @@ public class NoteEditorActivity extends AppCompatActivity {
                 MainActivity.notes.set(noteId,String.valueOf(charSequence));
                 // Update data
                 MainActivity.arrayAdapter.notifyDataSetChanged();
+                // Update
+                SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("dev.ddzmitry.noteswithnickapp", Context.MODE_PRIVATE);
+                // Put notes in map
+                HashSet<String> set = new HashSet<>(MainActivity.notes);
+                sharedPreferences.edit().putStringSet("notes",set).apply();
+
+
             }
 
             @Override

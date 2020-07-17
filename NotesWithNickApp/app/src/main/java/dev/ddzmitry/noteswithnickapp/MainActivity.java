@@ -1,7 +1,9 @@
 package dev.ddzmitry.noteswithnickapp;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,6 +16,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -21,13 +24,21 @@ public class MainActivity extends AppCompatActivity {
     // to be able to grab values from the other view
     static ArrayList<String> notes = new ArrayList<>();
     static ArrayAdapter arrayAdapter;
+    SharedPreferences sharedPreferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        sharedPreferences = getApplicationContext().getSharedPreferences("dev.ddzmitry.noteswithnickapp", Context.MODE_PRIVATE);
+
+        HashSet<String> set = (HashSet<String>) sharedPreferences.getStringSet("notes",null);
+        if(set == null){
+            notes.add("Example Note");
+        } else {
+            notes = new ArrayList<>(set);
+        }
 
         ListView listView = findViewById(R.id.listViewNotes);
-        notes.add("Example Note");
         // Setup layout
         arrayAdapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1,notes);
         listView.setAdapter(arrayAdapter);
@@ -59,8 +70,15 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 notes.remove(itemToDelete);
+                                arrayAdapter.notifyDataSetChanged();
+
+                                // Put notes in map
+                                HashSet<String> set = new HashSet<>(MainActivity.notes);
+                                sharedPreferences.edit().putStringSet("notes",set).apply();
                             }
                         })
+                        .setNegativeButton("NO",null)
+                        .show();
 
 
                 return  true;
