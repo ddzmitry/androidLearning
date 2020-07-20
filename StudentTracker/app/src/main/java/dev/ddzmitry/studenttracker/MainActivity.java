@@ -2,6 +2,7 @@ package dev.ddzmitry.studenttracker;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -11,14 +12,21 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import dev.ddzmitry.studenttracker.models.Term;
+import dev.ddzmitry.studenttracker.ui.TasksAdapter;
+import dev.ddzmitry.studenttracker.utilities.SampleData;
+import dev.ddzmitry.studenttracker.view.TaskViewModel;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,36 +35,53 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView TermRecyclerView;
 
     @OnClick(R.id.fab)
-    void fabClickHandler(){
+    void fabClickHandler() {
         System.out.println("FAB WAS CLICKED");
-//        Intent intent = new Intent(this,EditorActivity.class);
-//        startActivity(intent);
     }
 
     private List<Term> allTerms = new ArrayList<>();
+    private TasksAdapter tasksAdapter;
+    private TaskViewModel taskViewModel;
+//    private
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         // Bind View
         ButterKnife.bind(this);
         initRecyclerView();
+        initViewModel();
 
+    }
 
+    private void initViewModel() {
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        final Observer<List<Term>> termsObserver = new Observer<List<Term>>() {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            public void onChanged(@Nullable List<Term> terms) {
+                allTerms.clear();
+                allTerms.addAll(terms);
+
+                if (tasksAdapter == null) {
+                    // Create adapter
+                    tasksAdapter = new TasksAdapter(allTerms, MainActivity.this);
+                    // Set Adapter to Display view
+                    TermRecyclerView.setAdapter(tasksAdapter);
+                } else {
+                    // notify if data has changed
+                    tasksAdapter.notifyDataSetChanged();
+                }
+
             }
-        });
+        };
+        // pass class for view
+        taskViewModel = ViewModelProviders.of(this).get(TaskViewModel.class);
+        taskViewModel.allTerms.observe(this, termsObserver);
     }
 
     private void initRecyclerView() {
@@ -64,6 +89,10 @@ public class MainActivity extends AppCompatActivity {
         TermRecyclerView.setHasFixedSize(true);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         TermRecyclerView.setLayoutManager(layoutManager);
+        // instanciate adapter
+        tasksAdapter = new TasksAdapter(allTerms, this);
+        TermRecyclerView.setAdapter(tasksAdapter);
+
     }
 
     @Override
@@ -81,10 +110,25 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_add_data) {
+            addSampleData();
             return true;
+        } else if (id == R.id.action_delete_data){
+            deleteAllData();
+        } else  if (id == R.id.action_get_summary){
+            Intent intent = new Intent(this,SummaryActivity.class);
+            startActivity(intent);
+//            System.out.println("Getting Summary");
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+    private void addSampleData() {
+        taskViewModel.addSampleData();
+    }
+    private void deleteAllData() {
+        taskViewModel.removeAllData();
+    }
+
 }

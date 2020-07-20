@@ -9,14 +9,16 @@ import android.content.Context;
 import dev.ddzmitry.studenttracker.models.Term;
 
 /**
- * Created by dzmitrydubarau on 7/19/20.
+ * Created by dzmitrydubarau on 7/18/20.
  */
 
+// can add many through comma
 @Database(entities = {Term.class}, version = 1)
 @TypeConverters(DateConverter.class)
 public abstract class AppDatabase extends RoomDatabase {
-    public static final String DATABASE_NAME = "С196.db";
+    public static final String DATABASE_NAME = "C196.db";
     private static volatile AppDatabase instance;
+
     private static final Object LOCK = new Object();
 
     // For each DAO

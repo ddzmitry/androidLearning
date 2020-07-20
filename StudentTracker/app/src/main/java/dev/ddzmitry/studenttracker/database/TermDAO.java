@@ -29,17 +29,17 @@ public interface TermDAO {
     @Delete
     void deleteTerm(Term term);
 
-    @Query("SELECT * FROM term WHERE term_id = :id")
+    @Query("SELECT * FROM terms WHERE term_id = :id")
     Term getTermById(int id);
 
-    @Query("SELECT * FROM term ORDER BY start_date DESC")
+    @Query("SELECT * FROM terms ")
     LiveData<List<Term>> getAllTerms();
 
 
-    @Query("DELETE FROM term")
+    @Query("DELETE FROM terms")
     int deleteAllTerms();
 
-    @Query("SELECT COUNT(*) FROM term")
+    @Query("SELECT COUNT(*) FROM terms")
     int getTermsCount();
 
 

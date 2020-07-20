@@ -12,6 +12,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
+
+        android:layout_marginTop="@dimen/task_list_view_margin"
+        android:layout_marginBottom="@dimen/task_list_view_margin"
+        android:layout_marginStart="@dimen/task_list_view_margin"
+        android:layout_marginLeft="@dimen/task_list_view_margin"
+        android:layout_marginEnd="@dimen/task_list_view_margin"
         app:srcCompat="@android:drawable/ic_menu_edit"
         tools:layout_editor_absoluteX="16dp"
         tools:layout_editor_absoluteY="16dp"
@@ -28,6 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:text="TextView"
+
         android:maxLines="2"
         android:ellipsize="end"
         android:textSize="@dimen/list_text_size"

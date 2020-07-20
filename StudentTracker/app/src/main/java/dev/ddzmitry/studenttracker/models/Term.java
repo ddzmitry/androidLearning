@@ -11,7 +11,7 @@ import java.util.Date;
  */
 
 // Create model for term
-@Entity(tableName = "term")
+@Entity(tableName = "terms")
 public class Term {
     @PrimaryKey(autoGenerate = true)
     private int term_id;
@@ -23,7 +23,7 @@ public class Term {
     @Ignore
     public Term() {
     }
-    @Ignore
+
     public Term(int term_id, String term_title, Date start_date, Date end_date) {
         this.term_id = term_id;
         this.term_title = term_title;
@@ -31,6 +31,7 @@ public class Term {
         this.end_date = end_date;
     }
     // Constructor for DB to use since ID is autoincremented
+    @Ignore
     public Term(String term_title, Date start_date, Date end_date) {
         this.term_title = term_title;
         this.start_date = start_date;

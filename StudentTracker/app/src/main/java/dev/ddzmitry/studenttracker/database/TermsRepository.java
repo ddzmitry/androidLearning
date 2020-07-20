@@ -15,34 +15,32 @@ import dev.ddzmitry.studenttracker.utilities.SampleData;
  */
 
 public class TermsRepository {
-
-
     private static TermsRepository TermRepositoryInstance;
-    private TermDAO termDAO;
-    private LiveData<List<Term>> allTerms;
+    public LiveData<List<Term>> allTerms;
     private AppDatabase allDatabase;
     // For Processes on separated threat
     private Executor executor = Executors.newSingleThreadExecutor();
 
-
     public static TermsRepository getTermRepositoryInstance(Context context) {
+
         if (TermRepositoryInstance == null) {
             TermRepositoryInstance = new TermsRepository(context);
+
         }
         return TermRepositoryInstance;
     }
 
     private TermsRepository(Context context) {
-        // Get instance of database
+
         allDatabase = AppDatabase.getInstance(context);
-        // Gett all terms
         allTerms = getAllTerms();
+        // reference to DB
     }
 
 
     public LiveData<List<Term>> getAllTerms() {
         // go to DAO and get all terms
-        return termDAO.getAllTerms();
+        return allDatabase.termDAO().getAllTerms();
     }
 
     public void RemoveAllTerms() {
@@ -50,7 +48,7 @@ public class TermsRepository {
     }
 
     public void addSampleTerms() {
-
+        // termDAO.insertAllTerms(SampleData.getSampleTerms());
         executor.execute(() -> allDatabase.termDAO().insertAllTerms(SampleData.getSampleTerms()));
     }
 
