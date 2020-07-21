@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 27
     defaultConfig {
-        applicationId "dev.ddzmitry.plainolnotes3"
+        applicationId "dev.ddzmitry.studenttracker"
         minSdkVersion 15
         targetSdkVersion 27
         versionCode 1

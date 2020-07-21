@@ -47,9 +47,20 @@ public class TermsRepository {
         executor.execute(() -> allDatabase.termDAO().deleteAllTerms());
     }
 
+//    public void addSampleTerms() {
+//        // termDAO.insertAllTerms(SampleData.getSampleTerms());
+//        executor.execute(() -> allDatabase.termDAO().insertAllTerms(SampleData.getSampleTerms()));
+//        executor.execute(() -> allDatabase.courseDAO().insertAllCourses(SampleData.getSamplCourses()));
+//    }
+
     public void addSampleTerms() {
-        // termDAO.insertAllTerms(SampleData.getSampleTerms());
-        executor.execute(() -> allDatabase.termDAO().insertAllTerms(SampleData.getSampleTerms()));
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                allDatabase.termDAO().insertAllTerms(SampleData.getSampleTerms());
+//                allDatabase.courseDAO().insertAllCourses(SampleData.getSamplCourses());
+            }
+        });
     }
 
     public Term getTermById(final int term_id) {

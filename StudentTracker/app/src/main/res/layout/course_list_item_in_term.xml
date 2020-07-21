@@ -5,15 +5,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-<!--This item is for recycler view to display term elements-->
+    <!--This item is for recycler view to display term elements-->
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_term"
+        android:id="@+id/fab_course"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
         android:layout_margin="8dp"
-        app:srcCompat="@android:drawable/ic_menu_edit"
+        app:srcCompat="@android:drawable/ic_dialog_info"
         tools:layout_editor_absoluteX="16dp"
         tools:layout_editor_absoluteY="16dp"
         app:fabSize="mini"
@@ -24,7 +24,7 @@
         />
 
     <TextView
-        android:id="@+id/term_text"
+        android:id="@+id/course_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"

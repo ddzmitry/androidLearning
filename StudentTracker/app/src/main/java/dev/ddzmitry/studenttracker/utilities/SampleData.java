@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import dev.ddzmitry.studenttracker.models.Course;
 import dev.ddzmitry.studenttracker.models.Term;
 
 /**
@@ -28,6 +29,15 @@ public class SampleData {
         terms.add(new Term("Term2",getDate(50000),getDate(6000000)));
         terms.add(new Term("Term3",getDate(800),getDate(10000000)));
         return terms;
+    }
+
+    public static List<Course> getSamplCourses(){
+
+        List<Course> courses = new ArrayList<>();
+        courses.add(new Course("A123",getDate(10000),getDate(1000000),10));
+        courses.add(new Course("B123",getDate(50000),getDate(6000000),11));
+        courses.add(new Course("C123",getDate(800),getDate(10000000),12));
+        return courses;
     }
 
 }

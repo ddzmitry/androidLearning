@@ -24,9 +24,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import dev.ddzmitry.studenttracker.models.Term;
+import dev.ddzmitry.studenttracker.ui.CourseAdapter;
 import dev.ddzmitry.studenttracker.ui.TasksAdapter;
 import dev.ddzmitry.studenttracker.utilities.SampleData;
 import dev.ddzmitry.studenttracker.view.TaskViewModel;
+import dev.ddzmitry.studenttracker.view.TermViewModel;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,13 +36,14 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.recycler_view)
     RecyclerView TermRecyclerView;
 
-    @OnClick(R.id.fab)
-    void fabClickHandler() {
-        System.out.println("FAB WAS CLICKED");
-    }
+//    @OnClick(R.id.fab)
+//    void fabClickHandler() {
+//        System.out.println("FAB WAS CLICKED");
+//    }
 
     private List<Term> allTerms = new ArrayList<>();
     private TasksAdapter tasksAdapter;
+    private TermViewModel termViewModel;
     private TaskViewModel taskViewModel;
 //    private
 

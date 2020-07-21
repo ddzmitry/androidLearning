@@ -1,7 +1,9 @@
 package dev.ddzmitry.studenttracker.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +15,10 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import dev.ddzmitry.studenttracker.R;
+import dev.ddzmitry.studenttracker.ViewTermActivity;
 import dev.ddzmitry.studenttracker.models.Term;
+
+import static dev.ddzmitry.studenttracker.utilities.Constans.KEY_TERM_ID;
 
 /**
  * Created by dzmitrydubarau on 7/19/20.
@@ -35,8 +40,15 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.ViewHolder> 
     // Manage view itself
     public class ViewHolder extends RecyclerView.ViewHolder {
         // In Term list item bind element to id on constructor creation
+
+        // On clicker
+        @BindView(R.id.fab_term)
+        FloatingActionButton termFab;
+
         @BindView(R.id.term_text)
         TextView term_text_view;
+
+
 
         public ViewHolder(View itemView) {
 
@@ -67,6 +79,17 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.ViewHolder> 
         final Term term = allTerms.get(position);
         // Holder -> Viewholder
         holder.term_text_view.setText(term.getTerm_title());
+
+        holder.termFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(mContext, ViewTermActivity.class);
+                intent.putExtra(KEY_TERM_ID,term.getTerm_id());
+                mContext.startActivity(intent);
+
+            }
+        });
+
 
 
     }

@@ -23,13 +23,10 @@ public class TaskViewModel extends AndroidViewModel {
 
     public TaskViewModel(@NonNull Application application) {
         super(application);
-
         termsRepository = TermsRepository.getTermRepositoryInstance(application.getApplicationContext());
         System.out.println("termsRepository");
         System.out.println(termsRepository);
-
         allTerms = termsRepository.allTerms;
-
     }
 
     public void addSampleData(){

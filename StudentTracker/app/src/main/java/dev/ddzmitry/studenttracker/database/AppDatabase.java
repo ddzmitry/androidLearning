@@ -6,6 +6,7 @@ import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 
+import dev.ddzmitry.studenttracker.models.Course;
 import dev.ddzmitry.studenttracker.models.Term;
 
 /**
@@ -13,7 +14,7 @@ import dev.ddzmitry.studenttracker.models.Term;
  */
 
 // can add many through comma
-@Database(entities = {Term.class}, version = 1)
+@Database(entities = {Term.class, Course.class}, version = 2)
 @TypeConverters(DateConverter.class)
 public abstract class AppDatabase extends RoomDatabase {
     public static final String DATABASE_NAME = "C196.db";
@@ -23,6 +24,7 @@ public abstract class AppDatabase extends RoomDatabase {
 
     // For each DAO
     public abstract TermDAO termDAO();
+    public abstract CourseDAO courseDAO();
 
     // Create DB
     public static AppDatabase getInstance(Context context) {
@@ -31,7 +33,7 @@ public abstract class AppDatabase extends RoomDatabase {
             synchronized (LOCK){
                 if (instance == null){
                     // Create DB
-                    instance = Room.databaseBuilder(context.getApplicationContext(),AppDatabase.class,DATABASE_NAME).build();
+                    instance = Room.databaseBuilder(context.getApplicationContext(),AppDatabase.class,DATABASE_NAME).fallbackToDestructiveMigration().build();
 
                 }
             }

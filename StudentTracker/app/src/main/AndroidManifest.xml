@@ -28,6 +28,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="dev.ddzmitry.studenttracker.MainActivity" />
         </activity>
+        <activity
+            android:name=".ViewTermActivity"
+            android:label="@string/title_activity_view_term"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="dev.ddzmitry.studenttracker.MainActivity" />
+        </activity>
     </application>
 
 </manifest>
