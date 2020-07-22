@@ -14,10 +14,10 @@ import dev.ddzmitry.studenttracker.models.Term;
  */
 
 // can add many through comma
-@Database(entities = {Term.class, Course.class}, version = 2)
+@Database(entities = {Term.class, Course.class}, version = 1)
 @TypeConverters(DateConverter.class)
 public abstract class AppDatabase extends RoomDatabase {
-    public static final String DATABASE_NAME = "C196.db";
+    public static final String DATABASE_NAME = "MAIN1.db";
     private static volatile AppDatabase instance;
 
     private static final Object LOCK = new Object();
@@ -33,7 +33,8 @@ public abstract class AppDatabase extends RoomDatabase {
             synchronized (LOCK){
                 if (instance == null){
                     // Create DB
-                    instance = Room.databaseBuilder(context.getApplicationContext(),AppDatabase.class,DATABASE_NAME).fallbackToDestructiveMigration().build();
+                    //fallbackToDestructiveMigration()
+                    instance = Room.databaseBuilder(context.getApplicationContext(),AppDatabase.class,DATABASE_NAME).build();
 
                 }
             }

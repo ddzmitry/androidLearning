@@ -62,6 +62,17 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void initRecyclerView() {
+        // Set Size to be the same
+        TermRecyclerView.setHasFixedSize(true);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        TermRecyclerView.setLayoutManager(layoutManager);
+        // instanciate adapter
+        tasksAdapter = new TasksAdapter(allTerms, this);
+        TermRecyclerView.setAdapter(tasksAdapter);
+
+    }
+
     private void initViewModel() {
 
         final Observer<List<Term>> termsObserver = new Observer<List<Term>>() {
@@ -87,16 +98,7 @@ public class MainActivity extends AppCompatActivity {
         taskViewModel.allTerms.observe(this, termsObserver);
     }
 
-    private void initRecyclerView() {
-        // Set Size to be the same
-        TermRecyclerView.setHasFixedSize(true);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        TermRecyclerView.setLayoutManager(layoutManager);
-        // instanciate adapter
-        tasksAdapter = new TasksAdapter(allTerms, this);
-        TermRecyclerView.setAdapter(tasksAdapter);
 
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

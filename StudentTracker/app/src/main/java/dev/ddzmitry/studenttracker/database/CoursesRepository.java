@@ -57,6 +57,7 @@ public class CoursesRepository {
     }
 
     public void addSampleCourses() {
+        System.out.println("Adding courses");
         executor.execute(() -> allDatabase.courseDAO().insertAllCourses(SampleData.getSamplCourses()));
     }
 

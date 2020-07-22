@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import dev.ddzmitry.studenttracker.R;
 import dev.ddzmitry.studenttracker.models.Course;
 
@@ -32,6 +33,22 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.ViewHolder
         this.mContext = mContext;
     }
 
+    public class ViewHolder extends RecyclerView.ViewHolder {
+
+        // manage view itself
+        @BindView(R.id.course_text)
+        TextView courseTextView;
+        // Bind Edit button
+        @BindView(R.id.fab_course)
+        FloatingActionButton courseFab;
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+
+            ButterKnife.bind(this,itemView);
+        }
+    }
+
 
     @NonNull
     @Override
@@ -45,17 +62,19 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.ViewHolder
     public void onBindViewHolder(@NonNull CourseAdapter.ViewHolder holder, int position) {
 
         final Course course = courses.get(position);
+
         holder.courseTextView.setText(course.getCourse_title());
 
-//        holder.mFab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
+        holder.courseFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                System.out.println("Clicked on Course");
 //                Intent intent = new Intent(mContext, EditorActivity.class);
 //                intent.putExtra(NOTE_ID_KEY,note.getId());
 //                mContext.startActivity(intent);
-//
-//            }
-//        });
+
+            }
+        });
 
 
     }
@@ -65,22 +84,6 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.ViewHolder
         return courses.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-
-        // manage view itself
-        @BindView(R.id.course_text)
-        TextView courseTextView;
-        // Bind Edit button
-        @BindView(R.id.fab)
-        FloatingActionButton courseFab;
-
-        public ViewHolder(View itemView) {
-            super(itemView);
-
-
-
-        }
-    }
 
 
 

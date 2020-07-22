@@ -13,6 +13,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,8 +21,11 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import dev.ddzmitry.studenttracker.models.Course;
+import dev.ddzmitry.studenttracker.models.Term;
 import dev.ddzmitry.studenttracker.ui.CourseAdapter;
+import dev.ddzmitry.studenttracker.ui.TasksAdapter;
 import dev.ddzmitry.studenttracker.utilities.Constans;
+import dev.ddzmitry.studenttracker.view.CourseViewModel;
 import dev.ddzmitry.studenttracker.view.TermViewModel;
 
 import static dev.ddzmitry.studenttracker.utilities.Constans.KEY_TERM_ID;
@@ -31,10 +35,15 @@ public class ViewTermActivity extends AppCompatActivity {
     @BindView(R.id.coursesRecyclerView)
     RecyclerView coursesRecyclerView;
 
+    @BindView(R.id.termTitleText)
+    TextView termTitleText;
+
     // view
     private TermViewModel termViewModel;
+    private CourseViewModel courseViewModel;
     // courses
     private List<Course> coursesPerTerm = new ArrayList<>();
+    private Term term;
     // adapter
     private CourseAdapter courseAdapter;
 
@@ -45,8 +54,6 @@ public class ViewTermActivity extends AppCompatActivity {
         setContentView(R.layout.activity_view_term);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-
         ButterKnife.bind(this);
         initRecyclerView();
         initViewModel();
@@ -62,46 +69,75 @@ public class ViewTermActivity extends AppCompatActivity {
             DividerItemDecoration divider = new DividerItemDecoration(coursesRecyclerView.getContext(),layoutManager.getOrientation());
             coursesRecyclerView.addItemDecoration(divider);
 
+            final CourseAdapter courseAdapter = new CourseAdapter(coursesPerTerm,this);
+            coursesRecyclerView.setAdapter(courseAdapter);
+
         }
 
     private void initViewModel() {
+
+
+
+
         termViewModel = ViewModelProviders.of(this).get(TermViewModel.class);
-//        termViewModel.coursesPerTerm.observe(this,notesObserver);
+        courseViewModel = ViewModelProviders.of(this).get(CourseViewModel.class);
+//        courseViewModel.addSampleData();
 
-        coursesPerTerm.addAll(termViewModel.coursesPerTerm.getValue());
 
-
-        Bundle  extras = getIntent().getExtras();
-        int term_id = extras.getInt(KEY_TERM_ID);
-        termViewModel.loadTermData(term_id);
-
-        Log.i("Termid", String.valueOf(term_id));
-        System.out.println("TERM ID ID " + term_id);
-
-        final Observer<List<Course>> notesObserver = new Observer<List<Course>>() {
+        termViewModel.liveTermData.observe(this, new Observer<Term>() {
             @Override
-            public void onChanged(@Nullable List<Course> noteEntities) {
+            public void onChanged(@Nullable Term term) {
+                if(term != null){
+                    termTitleText.setText(term.getTerm_title());
+                }
+
+            }
+        });
+
+
+
+//
+
+
+        final Observer<List<Course>> termsObserver = new Observer<List<Course>>() {
+            @Override
+            public void onChanged(@Nullable List<Course> courses) {
+
+                if(courses == null){
+                    System.out.println("COURSES ARE NULL");
+                }
+//                System.out.println(courses.toArray().toString());
                 coursesPerTerm.clear();
-                coursesPerTerm.addAll(noteEntities);
+                coursesPerTerm.addAll(courses);
 
-                if(courseAdapter == null){
-
+                if (courseAdapter == null) {
                     // Create adapter
-                    courseAdapter = new CourseAdapter(coursesPerTerm,ViewTermActivity.this);
+                    courseAdapter = new CourseAdapter(coursesPerTerm, ViewTermActivity.this);
                     // Set Adapter to Display view
                     coursesRecyclerView.setAdapter(courseAdapter);
                 } else {
-
+                    // notify if data has changed
                     courseAdapter.notifyDataSetChanged();
                 }
-
 
             }
         };
 
 
+        Bundle  extras = getIntent().getExtras();
+        if(extras == null){
+            System.out.println("NEW TERM");
+        } else {
+            int term_id = extras.getInt(KEY_TERM_ID);
+            termViewModel.loadTermData(term_id);
+//            courseViewModel.getCoursesByTerm(term_id);
+            courseViewModel
+                    .getCoursesByTerm(term_id)
+                    .observe(ViewTermActivity.this, termsObserver);
 
-        termViewModel.coursesPerTerm.observe(this,notesObserver);
+        }
+
+
 
 
     }

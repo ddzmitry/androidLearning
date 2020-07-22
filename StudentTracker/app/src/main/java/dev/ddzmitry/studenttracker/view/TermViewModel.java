@@ -29,8 +29,7 @@ public class TermViewModel extends AndroidViewModel {
 
     public TermViewModel(@NonNull Application application) {
         super(application);
-        coursesRepository = CoursesRepository.getCoursesRepositoryInstance(application.getApplicationContext());
-        termsRepository = TermsRepository.getTermRepositoryInstance(application.getApplicationContext());
+        termsRepository = TermsRepository.getTermRepositoryInstance(this.getApplication());
     }
 
     public void loadTermData(final int termId) {
@@ -38,21 +37,15 @@ public class TermViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 Term term = termsRepository.getTermById(termId);
-
-//                coursesRepository.addSampleCourses();
-                System.out.println(coursesRepository.getCoursesByTermId(termId).getValue());
-                coursesPerTerm = coursesRepository.getAllCourses();
-                System.out.println("Course term is " + term.toString());
-
-
-//                for (Course course : coursesPerTerm.getValue()) {
-//                    System.out.println("COURSE");
-//                    System.out.println(course.toString());
-//                }
+                System.out.println("TERM IN VIEW MODEL IS " + term.toString());
                 liveTermData.postValue(term);
             }
         });
 
+    }
+
+    public MutableLiveData<Term> getLiveTermData() {
+        return liveTermData;
     }
 
     public void addSampleData(){

@@ -30,8 +30,6 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.ViewHolder> 
     private final Context mContext;
 
     public TasksAdapter(List<Term> allTerms, Context mContext) {
-        System.out.println("All terms");
-        System.out.println(allTerms);
         this.allTerms = allTerms;
         this.mContext = mContext;
     }
