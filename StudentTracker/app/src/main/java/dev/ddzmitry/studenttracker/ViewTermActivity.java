@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,8 +28,10 @@ import dev.ddzmitry.studenttracker.ui.TasksAdapter;
 import dev.ddzmitry.studenttracker.utilities.Constans;
 import dev.ddzmitry.studenttracker.view.CourseViewModel;
 import dev.ddzmitry.studenttracker.view.TermViewModel;
+import dev.ddzmitry.studenttracker.utilities.Utils;
 
 import static dev.ddzmitry.studenttracker.utilities.Constans.KEY_TERM_ID;
+import static dev.ddzmitry.studenttracker.utilities.Utils.formatDate;
 
 public class ViewTermActivity extends AppCompatActivity {
 
@@ -37,6 +40,9 @@ public class ViewTermActivity extends AppCompatActivity {
 
     @BindView(R.id.termTitleText)
     TextView termTitleText;
+
+    @BindView(R.id.termDateText)
+    TextView termDateText;
 
     // view
     private TermViewModel termViewModel;
@@ -89,6 +95,8 @@ public class ViewTermActivity extends AppCompatActivity {
             public void onChanged(@Nullable Term term) {
                 if(term != null){
                     termTitleText.setText(term.getTerm_title());
+
+                    termDateText.setText(String.format("Start: %s End: %s", formatDate(term.getStart_date()),formatDate(term.getEnd_date())));
                 }
 
             }

@@ -10,13 +10,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import dev.ddzmitry.studenttracker.CourseActivity;
 import dev.ddzmitry.studenttracker.R;
 import dev.ddzmitry.studenttracker.models.Course;
+import dev.ddzmitry.studenttracker.utilities.Utils;
+import  dev.ddzmitry.studenttracker.utilities.Constans;
+
+import static dev.ddzmitry.studenttracker.utilities.Constans.KEY_COURSE_ID;
 
 /**
  * Created by dzmitrydubarau on 7/19/20.
@@ -35,6 +39,8 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.ViewHolder
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
+        @BindView(R.id.course_date_text)
+        TextView course_date_text;
         // manage view itself
         @BindView(R.id.course_text)
         TextView courseTextView;
@@ -64,15 +70,18 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.ViewHolder
         final Course course = courses.get(position);
 
         holder.courseTextView.setText(course.getCourse_title());
+        // Set Date for course
+        holder.course_date_text.setText(String.format("%s - %s",
+                Utils.formatDate(course.getCourse_start_date()),
+                Utils.formatDate(course.getCourse_end_date())));
 
         holder.courseFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                System.out.println("Clicked on Course");
-//                Intent intent = new Intent(mContext, EditorActivity.class);
-//                intent.putExtra(NOTE_ID_KEY,note.getId());
-//                mContext.startActivity(intent);
 
+                Intent intent = new Intent(mContext, CourseActivity.class);
+                intent.putExtra(KEY_COURSE_ID,course.getCourse_id());
+                mContext.startActivity(intent);
             }
         });
 

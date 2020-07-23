@@ -17,6 +17,7 @@ import butterknife.ButterKnife;
 import dev.ddzmitry.studenttracker.R;
 import dev.ddzmitry.studenttracker.ViewTermActivity;
 import dev.ddzmitry.studenttracker.models.Term;
+import dev.ddzmitry.studenttracker.utilities.Utils;
 
 import static dev.ddzmitry.studenttracker.utilities.Constans.KEY_TERM_ID;
 
@@ -76,7 +77,8 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.ViewHolder> 
 
         final Term term = allTerms.get(position);
         // Holder -> Viewholder
-        holder.term_text_view.setText(term.getTerm_title());
+        String header = String.format("%s %s - %s",term.getTerm_title(),Utils.formatDate(term.getStart_date()),Utils.formatDate(term.getEnd_date()));
+        holder.term_text_view.setText(header);
 
         holder.termFab.setOnClickListener(new View.OnClickListener() {
             @Override

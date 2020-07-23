@@ -5,7 +5,9 @@ import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -21,8 +23,9 @@ import dev.ddzmitry.studenttracker.models.Term;
 
 public class CourseViewModel extends AndroidViewModel {
     public LiveData<List<Course>> coursesPerTerm;
-    private CoursesRepository coursesRepository;
 
+    private CoursesRepository coursesRepository;
+    public MutableLiveData<Course> liveCourseData = new MutableLiveData<>();
     public LiveData<List<Course>> allCourses;
     private Executor executor = Executors.newSingleThreadExecutor();
 
@@ -35,20 +38,30 @@ public class CourseViewModel extends AndroidViewModel {
         // application.getApplicationContext()
         return coursesRepository.getCoursesByTermId(term_id);
     }
+    public void loadCourseData(final int courseId) {
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                Course course = coursesRepository.getCoursesById(courseId);
+                liveCourseData.postValue(course);
+            }
+        });
 
-//    public void loadCourseDataFromTermID(final int termId) {
-//        executor.execute(new Runnable() {
-//            @Override
-//            public void run() {
-//                System.out.println("INSIDE loadCourseDataFromTermID TERM ID IS " + termId);
-////                coursesRepository.addSampleCourses();
-//                coursesPerTerm = coursesRepository.getAllCourses();
-////                System.out.println("Course term is " + term.toString());
-////                liveTermData.postValue(termId);
-//            }
-//        });
-//
-//    }
+    }
+
+    public void saveCourse() {
+        Course course_replacement = liveCourseData.getValue();
+        System.out.println("SAVE_COURSE");
+        System.out.println(course_replacement.toString());
+
+        if(course_replacement == null){
+            System.out.println("NEW COURSE");
+        } else {
+//            note.setText(noteText.trim());
+        }
+
+        coursesRepository.insertCourse(course_replacement);
+    }
 
     public void addSampleData(){
         coursesRepository.addSampleCourses();
