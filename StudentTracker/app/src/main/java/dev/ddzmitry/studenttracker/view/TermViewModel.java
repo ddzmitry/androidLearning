@@ -37,12 +37,13 @@ public class TermViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 Term term = termsRepository.getTermById(termId);
-                System.out.println("TERM IN VIEW MODEL IS " + term.toString());
                 liveTermData.postValue(term);
             }
         });
 
     }
+
+
 
     public MutableLiveData<Term> getLiveTermData() {
         return liveTermData;

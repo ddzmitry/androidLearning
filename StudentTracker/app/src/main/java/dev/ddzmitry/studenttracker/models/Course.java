@@ -27,6 +27,9 @@ public class Course {
     private Date course_start_date;
     private Date course_end_date;
 
+    public Course() {
+    }
+
     // Constructor to use for DB
     public Course(String course_title, Date course_start_date, Date course_end_date,int term_id) {
         this.course_title = course_title;

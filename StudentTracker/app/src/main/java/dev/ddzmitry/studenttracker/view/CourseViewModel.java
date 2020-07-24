@@ -32,7 +32,7 @@ public class CourseViewModel extends AndroidViewModel {
     public CourseViewModel(@NonNull Application application) {
         super(application);
         coursesRepository = CoursesRepository.getCoursesRepositoryInstance(this.getApplication());
-        allCourses = coursesRepository.getAllCourses();
+
     }
     public LiveData<List<Course>> getCoursesByTerm(int term_id){
         // application.getApplicationContext()
@@ -48,11 +48,15 @@ public class CourseViewModel extends AndroidViewModel {
         });
 
     }
+    public LiveData<List<Course>> getAllCourses(){
+                return coursesRepository.getAllCourses();
+    }
 
-    public void saveCourse() {
+    public void saveCourse(Course updatedCourse) {
         Course course_replacement = liveCourseData.getValue();
-        System.out.println("SAVE_COURSE");
-        System.out.println(course_replacement.toString());
+//        course_replacement.setCourse_title(title);
+//        System.out.println("SAVE_COURSE");
+//        System.out.println(course_replacement.toString());
 
         if(course_replacement == null){
             System.out.println("NEW COURSE");
@@ -60,7 +64,7 @@ public class CourseViewModel extends AndroidViewModel {
 //            note.setText(noteText.trim());
         }
 
-        coursesRepository.insertCourse(course_replacement);
+        coursesRepository.insertCourse(updatedCourse);
     }
 
     public void addSampleData(){

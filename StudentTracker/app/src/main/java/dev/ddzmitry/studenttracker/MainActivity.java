@@ -27,6 +27,7 @@ import dev.ddzmitry.studenttracker.models.Term;
 import dev.ddzmitry.studenttracker.ui.CourseAdapter;
 import dev.ddzmitry.studenttracker.ui.TasksAdapter;
 import dev.ddzmitry.studenttracker.utilities.SampleData;
+import dev.ddzmitry.studenttracker.view.CourseViewModel;
 import dev.ddzmitry.studenttracker.view.TaskViewModel;
 import dev.ddzmitry.studenttracker.view.TermViewModel;
 
@@ -57,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         // Bind View
         ButterKnife.bind(this);
+        // For performance boost
         initRecyclerView();
         initViewModel();
 

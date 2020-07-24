@@ -2,6 +2,7 @@ package dev.ddzmitry.studenttracker;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -18,6 +19,8 @@ import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -52,7 +55,7 @@ public class ViewTermActivity extends AppCompatActivity {
     private Term term;
     // adapter
     private CourseAdapter courseAdapter;
-
+    private Executor executor = Executors.newSingleThreadExecutor();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +64,14 @@ public class ViewTermActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ButterKnife.bind(this);
-        initRecyclerView();
-        initViewModel();
+
+        new Thread(new Runnable() {
+            public void run() {
+                initRecyclerView();
+                initViewModel();
+            }
+        }).start();
+
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
@@ -113,11 +122,10 @@ public class ViewTermActivity extends AppCompatActivity {
 
                 if(courses == null){
                     System.out.println("COURSES ARE NULL");
+                } else{
+                    coursesPerTerm.clear();
+                    coursesPerTerm.addAll(courses);
                 }
-//                System.out.println(courses.toArray().toString());
-                coursesPerTerm.clear();
-                coursesPerTerm.addAll(courses);
-
                 if (courseAdapter == null) {
                     // Create adapter
                     courseAdapter = new CourseAdapter(coursesPerTerm, ViewTermActivity.this);
@@ -137,11 +145,18 @@ public class ViewTermActivity extends AppCompatActivity {
             System.out.println("NEW TERM");
         } else {
             int term_id = extras.getInt(KEY_TERM_ID);
-            termViewModel.loadTermData(term_id);
-//            courseViewModel.getCoursesByTerm(term_id);
-            courseViewModel
-                    .getCoursesByTerm(term_id)
-                    .observe(ViewTermActivity.this, termsObserver);
+
+            courseViewModel.getCoursesByTerm(term_id);
+            executor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    termViewModel.loadTermData(term_id);
+                    courseViewModel
+                            .getCoursesByTerm(term_id)
+                            .observe(ViewTermActivity.this, termsObserver);
+                }
+            });
+
 
         }
 
@@ -149,5 +164,6 @@ public class ViewTermActivity extends AppCompatActivity {
 
 
     }
+
 
 }

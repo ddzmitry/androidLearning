@@ -77,16 +77,19 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.ViewHolder> 
 
         final Term term = allTerms.get(position);
         // Holder -> Viewholder
-        String header = String.format("%s %s - %s",term.getTerm_title(),Utils.formatDate(term.getStart_date()),Utils.formatDate(term.getEnd_date()));
-        holder.term_text_view.setText(header);
+//        String header = String.format("%s %s - %s",term.getTerm_title(),Utils.formatDate(term.getStart_date()),Utils.formatDate(term.getEnd_date()));
+        holder.term_text_view.setText(String.format("%s %s - %s",term.getTerm_title(),Utils.formatDate(term.getStart_date()),Utils.formatDate(term.getEnd_date())));
 
         holder.termFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(mContext, ViewTermActivity.class);
-                intent.putExtra(KEY_TERM_ID,term.getTerm_id());
-                mContext.startActivity(intent);
-
+                new Thread(new Runnable() {
+                    public void run() {
+                        Intent intent = new Intent(mContext, ViewTermActivity.class);
+                        intent.putExtra(KEY_TERM_ID,term.getTerm_id());
+                        mContext.startActivity(intent);
+                    }
+                }).start();
             }
         });
 
