@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
         String valueTodo = textTodo.getText().toString();
         textTodo.setText(null);
         todoItems.add(valueTodo);
+
     }
 
     @Override

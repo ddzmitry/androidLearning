@@ -53,6 +53,7 @@ public class EditorActivity extends AppCompatActivity {
     }
 
     private void initViewModel() {
+
         mViewModel = ViewModelProviders
                 .of(this).get(EditorViewModel.class);
 

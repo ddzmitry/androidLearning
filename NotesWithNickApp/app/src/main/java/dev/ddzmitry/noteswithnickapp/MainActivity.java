@@ -21,6 +21,7 @@ import java.util.HashSet;
 public class MainActivity extends AppCompatActivity {
 
 
+
     // to be able to grab values from the other view
     static ArrayList<String> notes = new ArrayList<>();
     static ArrayAdapter arrayAdapter;

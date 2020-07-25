@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
 //            Log.i("Info","ID is " + id);
 //            mediaPlayer = MediaPlayer.create(this, R.raw.howareyou);
 //            mediaPlayer.start();
-//        }else if(id.contains("doyouspeakenglish")){
+//        }else if(id.conftains("doyouspeakenglish")){
 //            mediaPlayer.stop();
 //            Log.i("Info","ID is " + id);
 //            mediaPlayer = MediaPlayer.create(this, R.raw.doyouspeakenglish);
