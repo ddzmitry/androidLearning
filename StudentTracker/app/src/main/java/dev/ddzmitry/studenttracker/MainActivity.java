@@ -1,5 +1,7 @@
 package dev.ddzmitry.studenttracker;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,16 +34,16 @@ import dev.ddzmitry.studenttracker.view.CourseViewModel;
 import dev.ddzmitry.studenttracker.view.TaskViewModel;
 import dev.ddzmitry.studenttracker.view.TermViewModel;
 
+import static dev.ddzmitry.studenttracker.utilities.Constans.KEY_TERM_ID;
+
 public class MainActivity extends AppCompatActivity {
 
     // Use butterKnife
     @BindView(R.id.recycler_view)
     RecyclerView TermRecyclerView;
+    @BindView(R.id.fab_main)
+    FloatingActionButton add_term;
 
-//    @OnClick(R.id.fab)
-//    void fabClickHandler() {
-//        System.out.println("FAB WAS CLICKED");
-//    }
 
     private List<Term> allTerms = new ArrayList<>();
     private TasksAdapter tasksAdapter;
@@ -48,6 +51,20 @@ public class MainActivity extends AppCompatActivity {
     private TaskViewModel taskViewModel;
 //    private
 
+//    private void alertView( String message ) {
+//        AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+//        dialog.setTitle( "Hello" )
+//                .setIcon(R.drawable.ic_launcher)
+//                .setMessage(message)
+////     .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+////      public void onClick(DialogInterface dialoginterface, int i) {
+////          dialoginterface.cancel();
+////          }})
+//                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialoginterface, int i) {
+//                    }
+//                }).show();
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +78,26 @@ public class MainActivity extends AppCompatActivity {
         // For performance boost
         initRecyclerView();
         initViewModel();
+        // Adding term
+        add_term.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i("MainActivity", "Adding new term");
+                Intent intent = new Intent(getApplicationContext(), TermActivity.class);
+                startActivity(intent);
+            }
+        });
 
+//        AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+//        alertDialog.setTitle("Alert");
+//        alertDialog.setMessage("Alert message to be shown");
+//        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+//                new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        dialog.dismiss();
+//                    }
+//                });
+//        alertDialog.show();
     }
 
     private void initRecyclerView() {

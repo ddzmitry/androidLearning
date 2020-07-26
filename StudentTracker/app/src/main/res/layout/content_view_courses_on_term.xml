@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="dev.ddzmitry.studenttracker.ViewTermActivity"
-    tools:showIn="@layout/activity_view_term">
+    tools:context="dev.ddzmitry.studenttracker.CoursesForTermActivity"
+    tools:showIn="@layout/activity_view_courses_per_term">
 
 
     <android.support.v7.widget.RecyclerView

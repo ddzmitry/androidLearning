@@ -43,6 +43,9 @@ public class TermViewModel extends AndroidViewModel {
 
     }
 
+    public void saveTerm(Term updatedTerm) {
+        termsRepository.insertTerm(updatedTerm);
+    }
 
 
     public MutableLiveData<Term> getLiveTermData() {

@@ -15,7 +15,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import dev.ddzmitry.studenttracker.R;
-import dev.ddzmitry.studenttracker.ViewTermActivity;
+import dev.ddzmitry.studenttracker.TermActivity;
 import dev.ddzmitry.studenttracker.models.Term;
 import dev.ddzmitry.studenttracker.utilities.Utils;
 
@@ -85,9 +85,11 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.ViewHolder> 
             public void onClick(View view) {
                 new Thread(new Runnable() {
                     public void run() {
-                        Intent intent = new Intent(mContext, ViewTermActivity.class);
+//                        Intent intent = new Intent(mContext, CoursesForTermActivity.class);
+                        Intent intent = new Intent(mContext, TermActivity.class);
                         intent.putExtra(KEY_TERM_ID,term.getTerm_id());
                         mContext.startActivity(intent);
+
                     }
                 }).start();
             }

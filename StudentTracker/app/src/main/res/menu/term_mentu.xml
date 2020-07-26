@@ -1,0 +1,25 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="dev.ddzmitry.studenttracker.TermActivity">
+    <item
+        android:id="@+id/delete_term"
+        android:orderInCategory="100"
+        android:title="Delete Term" />
+    <item
+        android:id="@+id/edit_term"
+        android:orderInCategory="101"
+        android:title="Edit Term"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/activate_term"
+        android:orderInCategory="101"
+        android:title="Activate Term"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/view_all_courses"
+        android:orderInCategory="101"
+        android:title="View Courses"
+        app:showAsAction="never" />
+</menu>

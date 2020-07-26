@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -65,6 +66,8 @@ public class CourseActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         ButterKnife.bind(this);
+
+
 
         initViewModel();
 
@@ -199,6 +202,13 @@ public class CourseActivity extends AppCompatActivity {
 
     }
 
+
+    @Override
+    public void onBackPressed() {
+        Toast.makeText(getApplicationContext(),"Back button clicked", Toast.LENGTH_SHORT).show();
+        return;
+    }
+
     private void showDatePicker() {
 
         Calendar cal = Calendar.getInstance();
@@ -226,9 +236,4 @@ public class CourseActivity extends AppCompatActivity {
         finish();
     }
 
-    @Override
-    public void onBackPressed() {
-        saveAndReturn();
-
-    }
 }
