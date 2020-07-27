@@ -67,6 +67,7 @@ public class TermsRepository {
         return allDatabase.termDAO().getTermById(term_id);
     }
 
+
     public void insertTerm(final Term term) {
         executor.execute(() -> allDatabase.termDAO().insertTerm(term));
     }

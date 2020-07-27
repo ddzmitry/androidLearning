@@ -13,13 +13,17 @@
 
     <EditText
         android:id="@+id/editCourseText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="106dp"
+        android:layout_width="246dp"
+        android:layout_height="57dp"
+        android:layout_marginTop="44dp"
         android:ems="10"
         android:hint="Course Name"
         android:inputType="textPersonName"
+
+        android:textSize="18sp"
+        android:textStyle="bold|italic"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.851"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -27,11 +31,12 @@
         android:id="@+id/editCourseStartDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="18dp"
         android:ems="10"
         android:focusable="false"
-        android:hint="Start Date"
+        android:hint="Course Start Date"
         android:inputType="date"
+        android:textStyle="italic"
         app:layout_constraintStart_toStartOf="@+id/editCourseText"
         app:layout_constraintTop_toBottomOf="@+id/editCourseText" />
 
@@ -42,19 +47,64 @@
         android:layout_marginTop="18dp"
         android:ems="10"
         android:focusable="false"
-        android:hint="End Date"
+        android:hint="Course End Date"
         android:inputType="date"
+        android:textStyle="italic"
         app:layout_constraintStart_toStartOf="@+id/editCourseStartDate"
         app:layout_constraintTop_toBottomOf="@+id/editCourseStartDate" />
 
     <Button
         android:id="@+id/buttonSaveUpdate"
-        android:layout_width="211dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="12dp"
+        android:layout_width="118dp"
+        android:layout_height="49dp"
+        android:layout_marginTop="16dp"
         android:text="Button"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editCourseEndDate" />
+
+    <TextView
+        android:id="@+id/textViewTermName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:text="Course Name"
+        android:textAlignment="center"
+        android:textStyle="bold|italic"
+        app:layout_constraintBottom_toBottomOf="@+id/editCourseText"
+        app:layout_constraintEnd_toStartOf="@+id/editCourseText"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewTermStart"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Start Date"
+        android:textAlignment="center"
+        android:textStyle="bold|italic"
+        app:layout_constraintEnd_toStartOf="@+id/editCourseStartDate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/editCourseStartDate" />
+
+    <TextView
+        android:id="@+id/textViewTermEnd"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:text="End Date"
+        android:textAlignment="center"
+        android:textStyle="bold|italic"
+        app:layout_constraintBaseline_toBaselineOf="@+id/editCourseEndDate"
+        app:layout_constraintEnd_toStartOf="@+id/editCourseEndDate"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
 
 </android.support.constraint.ConstraintLayout>

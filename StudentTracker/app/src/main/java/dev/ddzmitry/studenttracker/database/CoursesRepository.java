@@ -60,7 +60,11 @@ public class CoursesRepository {
         System.out.println("Adding courses");
         executor.execute(() -> allDatabase.courseDAO().insertAllCourses(SampleData.getSamplCourses()));
     }
+    public void addOnTermUpdates(List<Course> courses) {
+        System.out.println("Adding courses on term updates");
+        executor.execute(() -> allDatabase.courseDAO().insertAllCourses(courses));
 
+    }
     public void removeAllCourses() {
         executor.execute(() -> allDatabase.courseDAO().deleteAllCourses());
     }

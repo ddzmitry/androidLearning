@@ -47,7 +47,14 @@ public class TermViewModel extends AndroidViewModel {
         termsRepository.insertTerm(updatedTerm);
     }
 
+    // courses
 
+    public Term getTermById(int term_id ) {
+        return termsRepository.getTermById(term_id);
+    }
+    public void  deleteTerm(){
+        termsRepository.deleteTerm(liveTermData.getValue());
+    }
     public MutableLiveData<Term> getLiveTermData() {
         return liveTermData;
     }

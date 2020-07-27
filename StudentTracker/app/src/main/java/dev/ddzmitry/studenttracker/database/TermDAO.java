@@ -32,6 +32,7 @@ public interface TermDAO {
     @Query("SELECT * FROM terms WHERE term_id = :id")
     Term getTermById(int id);
 
+
     @Query("SELECT * FROM terms ")
     LiveData<List<Term>> getAllTerms();
 

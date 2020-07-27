@@ -44,12 +44,13 @@
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="dev.ddzmitry.studenttracker.CoursesForTermActivity" />
+                android:value="dev.ddzmitry.studenttracker.MainActivity" />
         </activity>
         <activity
             android:label="Term View"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".CoursesForTermActivity"
             android:name=".TermActivity"></activity>
+        <receiver android:name=".utilities.Alerting" />
     </application>
 
 </manifest>

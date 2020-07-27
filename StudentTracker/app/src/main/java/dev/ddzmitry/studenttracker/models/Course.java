@@ -1,18 +1,15 @@
 package dev.ddzmitry.studenttracker.models;
-
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
-import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
-import android.arch.persistence.room.PrimaryKey;
 import java.util.Date;
+
+import dev.ddzmitry.studenttracker.database.CourseProgress;
 
 /**
  * Created by dzmitrydubarau on 7/19/20.
  */
-
-
 // If Removed Cascade
 @Entity(tableName = "courses",
         foreignKeys = @ForeignKey(entity = Term.class,
@@ -20,12 +17,20 @@ import java.util.Date;
                 childColumns = "term_id",
                 onDelete = ForeignKey.CASCADE))
 public class Course {
+
     @PrimaryKey(autoGenerate = true)
-    private int course_id; // PK
-    private int term_id; // FK
+    // PK
+    private int course_id;
+    // FK
+    private int term_id;
+
     private String course_title;
     private Date course_start_date;
     private Date course_end_date;
+
+    private String note;
+    private CourseProgress courseProgress;
+
 
     public Course() {
     }

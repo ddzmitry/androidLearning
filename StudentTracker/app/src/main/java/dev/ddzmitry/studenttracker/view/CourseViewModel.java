@@ -35,7 +35,6 @@ public class CourseViewModel extends AndroidViewModel {
 
     }
     public LiveData<List<Course>> getCoursesByTerm(int term_id){
-        // application.getApplicationContext()
         return coursesRepository.getCoursesByTermId(term_id);
     }
     public void loadCourseData(final int courseId) {
@@ -54,10 +53,6 @@ public class CourseViewModel extends AndroidViewModel {
 
     public void saveCourse(Course updatedCourse) {
         Course course_replacement = liveCourseData.getValue();
-//        course_replacement.setCourse_title(title);
-//        System.out.println("SAVE_COURSE");
-//        System.out.println(course_replacement.toString());
-
         if(course_replacement == null){
             System.out.println("NEW COURSE");
         } else {
@@ -70,6 +65,16 @@ public class CourseViewModel extends AndroidViewModel {
     public void addSampleData(){
         coursesRepository.addSampleCourses();
     }
+
+    public void  addOnTermUpdates(List<Course> courses){
+
+        coursesRepository.addOnTermUpdates(courses);
+    }
+
+    public void deleteCourse(){
+        coursesRepository.deleteCourse(liveCourseData.getValue());
+    }
+
     public void removeAllData() {
         coursesRepository.removeAllCourses();
     }

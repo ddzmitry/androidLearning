@@ -17,7 +17,7 @@ import dev.ddzmitry.studenttracker.models.Term;
 @Database(entities = {Term.class, Course.class}, version = 1)
 @TypeConverters(DateConverter.class)
 public abstract class AppDatabase extends RoomDatabase {
-    public static final String DATABASE_NAME = "MAIN1.db";
+    public static final String DATABASE_NAME = "MAIN123.db";
     private static volatile AppDatabase instance;
 
     private static final Object LOCK = new Object();

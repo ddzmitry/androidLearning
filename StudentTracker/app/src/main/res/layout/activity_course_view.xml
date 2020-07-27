@@ -23,7 +23,8 @@
     <include layout="@layout/content_course_view" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+        android:visibility="gone"
+        android:id="@+id/fab_delete_course"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"

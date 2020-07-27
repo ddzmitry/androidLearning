@@ -3,10 +3,12 @@ package dev.ddzmitry.studenttracker;
 import android.app.DatePickerDialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -20,13 +22,20 @@ import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import dev.ddzmitry.studenttracker.models.Course;
 import dev.ddzmitry.studenttracker.models.Term;
+import dev.ddzmitry.studenttracker.ui.CourseAdapter;
+import dev.ddzmitry.studenttracker.view.CourseViewModel;
 import dev.ddzmitry.studenttracker.view.TermViewModel;
 
 import static dev.ddzmitry.studenttracker.utilities.Constans.KEY_TERM_ID;
@@ -37,26 +46,25 @@ public class TermActivity extends AppCompatActivity {
     // Butter
     @BindView(R.id.editTermText)
     TextView editTermText;
-
     @BindView(R.id.editTermStartDate)
     TextView editTermStartDate;
-
     @BindView(R.id.editTermEndDate)
     TextView editTermEndDate;
-
     @BindView(R.id.editTermUtilityButton)
     Button UtilityButton;
-
     // view
     private TermViewModel termViewModel;
-
+    private CourseViewModel courseViewModel;
+    // data
+    private List<Course> coursesPerTerm = new ArrayList<>();
     // Calendar
     private DatePickerDialog.OnDateSetListener DatePickerDialogListener;
     // Bools
     Boolean isUpdating;
-    Boolean editingStart;
     // Term
     private Term termToWorkWith = new Term();
+
+    private Executor executor = Executors.newSingleThreadExecutor();
 
 
     @Override
@@ -76,8 +84,6 @@ public class TermActivity extends AppCompatActivity {
         DatePickerDialogListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                // month + 1
-
                 System.out.println(String.format("%s/%s/%s", year, month, day));
                 Date date = new GregorianCalendar(year, month, day).getTime();
                 Date end_date;
@@ -85,14 +91,10 @@ public class TermActivity extends AppCompatActivity {
                 myCal.setTime(date);
                 myCal.add(Calendar.MONTH, +6);
                 end_date = myCal.getTime();
-
                 editTermStartDate.setText(formatDate(date));
                 editTermEndDate.setText(formatDate(end_date));
                 termToWorkWith.setStart_date(date);
                 termToWorkWith.setEnd_date(end_date);
-//                    editingStart = false;
-
-
             }
         };
 
@@ -100,18 +102,55 @@ public class TermActivity extends AppCompatActivity {
         UtilityButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                termViewModel.saveTerm(termToWorkWith);
+                String validation =  ValidateTerm(termToWorkWith);
+                if(validation==null){
+                    AlertDialog.Builder builder = new AlertDialog.Builder(TermActivity.this);
+                    builder.setTitle("Update/Save Term?");
+                    builder.setMessage("Would you like to save/update term info?");
+                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            termViewModel.saveTerm(termToWorkWith);
+                            courseViewModel.addOnTermUpdates(coursesPerTerm);
+                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                            startActivity(intent);
+                            finish();
+                        }
+                    });
+                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                        }
+                    });
+                    builder.show();
+                } else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(TermActivity.this);
+                    builder.setTitle("Validation Error");
+                    builder.setMessage(validation);
+                    builder.show();
+
+                }
+
+
+
             }
         });
 
 
     }
 
+    // Disable Menu Options
+    @Override
+    public boolean onPrepareOptionsMenu (Menu menu) {
+        Bundle extras = getIntent().getExtras();
+        if (extras == null)
+        {
+            menu.clear();
+        }
+        return true;
+}
+
     private void initViewModel() {
-
-
         termViewModel = ViewModelProviders.of(this).get(TermViewModel.class);
-
+        courseViewModel = ViewModelProviders.of(this).get(CourseViewModel.class);
         // Observing the data
         termViewModel.liveTermData.observe(this, new Observer<Term>() {
             @Override
@@ -127,20 +166,41 @@ public class TermActivity extends AppCompatActivity {
             }
         });
 
+
+        final Observer<List<Course>> termsObserver = new Observer<List<Course>>() {
+            @Override
+            public void onChanged(@Nullable List<Course> courses) {
+
+                if (courses == null) {
+                    System.out.println("COURSES ARE NULL");
+                } else {
+                    coursesPerTerm.clear();
+                    coursesPerTerm.addAll(courses);
+                }
+            }
+        };
+
         Bundle extras = getIntent().getExtras();
         if (extras == null) {
-
-            System.out.println("NEW TERM");
+            setToUpdate();
             UtilityButton.setText(String.valueOf("Create"));
 
         } else {
-
             setNotToUpdate();
             // Use to pull up data
             UtilityButton.setText(String.valueOf("Update"));
             int term_id = extras.getInt(KEY_TERM_ID);
             Log.i("TermActivity", "TermId: " + term_id);
-            termViewModel.loadTermData(term_id);
+            courseViewModel.getCoursesByTerm(term_id);
+            executor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    termViewModel.loadTermData(term_id);
+                    courseViewModel
+                            .getCoursesByTerm(term_id)
+                            .observe(TermActivity.this, termsObserver);
+                }
+            });
         }
 
 
@@ -193,9 +253,49 @@ public class TermActivity extends AppCompatActivity {
 
     public void deleteTerm() {
 
-        // TODO check if there are coursers , and if there are courses then dont delete , else delete it
+        if (coursesPerTerm.size() == 0) {
+
+            // allert
+            AlertDialog.Builder builder = new AlertDialog.Builder(TermActivity.this);
+            builder.setTitle("Delete term?");
+            builder.setMessage("Are you sure you want to delete term:  " + termToWorkWith.getTerm_title());
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    termViewModel.deleteTerm();
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            });
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+
+                }
+            });
+            builder.show();
+
+        } else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Validation Error");
+            builder.setMessage("Remove all courses from term! Before Deleting it!");
+            builder.show();
+
+        }
 
     }
+
+    public String ValidateTerm(Term termToWorkWith) {
+        if (termToWorkWith.getTerm_title() == null) {
+            return "Need Title for term.";
+        } else if (termToWorkWith.getStart_date() == null) {
+            return "Need Start Date for term.";
+        } else if (termToWorkWith.getEnd_date() == null) {
+            return "Need End Date for term.";
+        } else {
+            return null;
+        }
+    }
+
 
     // Menue
     @Override
@@ -221,15 +321,14 @@ public class TermActivity extends AppCompatActivity {
             deleteTerm();
 
         } else if (id == R.id.activate_term) {
-        } else if (id == R.id.view_all_courses)
-        {
+        } else if (id == R.id.view_all_courses) {
             Log.i("TermActivity", "Going to check courses " + termToWorkWith.toString());
             //Intent intent = new Intent(mContext, CoursesForTermActivity.class);
             Intent intent = new Intent(getApplicationContext(), CoursesForTermActivity.class);
             intent.putExtra(KEY_TERM_ID,
                     termToWorkWith.getTerm_id());
             startActivity(intent);
-            finish();
+//            finish();
         }
 
         return super.onOptionsItemSelected(item);

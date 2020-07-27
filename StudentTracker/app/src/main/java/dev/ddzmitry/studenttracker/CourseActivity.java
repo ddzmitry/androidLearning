@@ -3,23 +3,30 @@ package dev.ddzmitry.studenttracker;
 import android.app.DatePickerDialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.lang.reflect.Executable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -50,11 +57,19 @@ public class CourseActivity extends AppCompatActivity {
     @BindView(R.id.buttonSaveUpdate)
     Button buttonSaveUpdate;
 
+    @BindView(R.id.fab_delete_course)
+    FloatingActionButton fab_delete_course;
+
+
+    // View Models
+    private TermViewModel termViewModel;
     private CourseViewModel courseViewModel;
+    // Classes
     private Course courseToWorkWith = new Course();
+    private Term parentTerm = new Term();
     private DatePickerDialog.OnDateSetListener DatePickerDialogListener;
 
-    Boolean isUpdating;
+    Boolean isUpdating = false;
     Boolean editingStart, editingEnd;
 
 
@@ -68,23 +83,30 @@ public class CourseActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
 
-
         initViewModel();
 
-//        new Thread(new Runnable() {
-//            public void run() {
-//                initViewModel();
-//            }
-//        }).start();
-
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        fab_delete_course.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(CourseActivity.this);
+                builder.setTitle("Delete Course?");
+                builder.setMessage("Are you sure you want to delete course:  " + courseToWorkWith.getCourse_title());
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        courseViewModel.deleteCourse();
+                        Intent intent = new Intent(getApplicationContext(), CoursesForTermActivity.class);
+                        intent.putExtra(KEY_TERM_ID, parentTerm.getTerm_id());
+                        startActivity(intent);
+                        finish();
+                    }
+                });
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
 
+                    }
+                });
+                builder.show();
 
-                //showDatePicker();
             }
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -104,7 +126,6 @@ public class CourseActivity extends AppCompatActivity {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                 // month + 1
-
                 System.out.println(String.format("%s/%s/%s", year, month, day));
                 Date date = new GregorianCalendar(year, month, day).getTime();
                 if (editingStart) {
@@ -145,7 +166,7 @@ public class CourseActivity extends AppCompatActivity {
                     public void afterTextChanged(Editable editable) {
                         if (editable.toString().isEmpty()) {
                             Toast.makeText(CourseActivity.this, "NEED TO HAVE VALUE", Toast.LENGTH_SHORT).show();
-                        }else {
+                        } else {
                             courseToWorkWith.setCourse_title(editable.toString());
                         }
                     }
@@ -156,9 +177,9 @@ public class CourseActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 if (isUpdating) {
-                    courseViewModel.saveCourse(courseToWorkWith);
+                    saveAndReturn();
                 } else {
-                    // Save Logic
+                    saveAndReturn();
                 }
 
             }
@@ -169,45 +190,55 @@ public class CourseActivity extends AppCompatActivity {
 
     private void initViewModel() {
         courseViewModel = ViewModelProviders.of(this).get(CourseViewModel.class);
-
-
-        courseViewModel
-                .liveCourseData.observe(this, new Observer<Course>() {
-            @Override
-            public void onChanged(@Nullable Course course) {
-                if (course != null) {
-                    editCourseText.setText(course.getCourse_title().toString());
-                    editCourseStartDate.setText(formatDate(course.getCourse_start_date()));
-                    editCourseEndDate.setText(formatDate(course.getCourse_end_date()));
-                    courseToWorkWith = courseViewModel.liveCourseData.getValue();
-                }
-            }
-        });
+        termViewModel = ViewModelProviders.of(this).get(TermViewModel.class);
 
 
         Bundle extras = getIntent().getExtras();
-        if (extras == null) {
-            System.out.println("NEW COURSE");
-            buttonSaveUpdate.setText("Save");
-        } else {
-            buttonSaveUpdate.setText("Update");
+        Intent intent = getIntent();
+
+        if (intent.hasExtra(KEY_COURSE_ID)) {
+
+            fab_delete_course.setVisibility(View.VISIBLE);
             isUpdating = true;
-            int course_id = extras.getInt(KEY_COURSE_ID);
+            Integer course_id = extras.getInt(KEY_COURSE_ID);
+            buttonSaveUpdate.setText("Update");
             courseViewModel.loadCourseData(course_id);
+            courseViewModel
+                    .liveCourseData.observe(this, new Observer<Course>() {
+                @Override
+                public void onChanged(@Nullable Course course) {
+                    if (course != null) {
 
-            System.out.println("WORKING WITH COURSE");
-//            System.out.println(courseToWorkWith.toString());
+                        // on separated thread
+                        new Thread(new Runnable() {
+                            public void run() {
+                                parentTerm = termViewModel.getTermById(course.getTerm_id());
+                            }
+                        }).start();
 
+                        editCourseText.setText(course.getCourse_title().toString());
+                        editCourseStartDate.setText(formatDate(course.getCourse_start_date()));
+                        editCourseEndDate.setText(formatDate(course.getCourse_end_date()));
+                        courseToWorkWith = courseViewModel.liveCourseData.getValue();
+
+                    }
+                }
+            });
+
+        } else if (intent.hasExtra(KEY_TERM_ID)) {
+            Integer term_id = extras.getInt(KEY_TERM_ID);
+            buttonSaveUpdate.setText("Save");
+            courseToWorkWith.setTerm_id(term_id);
+            new Thread(new Runnable() {
+                public void run() {
+                    parentTerm = termViewModel.getTermById(term_id);
+                }
+            }).start();
+        } else {
+            System.out.println("NEW NOT FOR TERM");
         }
-
     }
 
-
-    @Override
-    public void onBackPressed() {
-        Toast.makeText(getApplicationContext(),"Back button clicked", Toast.LENGTH_SHORT).show();
-        return;
-    }
 
     private void showDatePicker() {
 
@@ -215,25 +246,138 @@ public class CourseActivity extends AppCompatActivity {
         int year = cal.get(Calendar.YEAR);
         int month = cal.get(Calendar.MONTH);
         int day = cal.get(Calendar.DAY_OF_MONTH);
-
+        // Set current Date to default
         DatePickerDialog dialog = new DatePickerDialog(CourseActivity.this,
                 android.R.style.Theme_Holo_Dialog_MinWidth,
                 DatePickerDialogListener,
                 year, month, day);
-
+        // That will allow only pick dates in range of the current term
+        dialog.getDatePicker().setMinDate(parentTerm.getStart_date().getTime());
+        dialog.getDatePicker().setMaxDate(parentTerm.getEnd_date().getTime());
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.show();
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // only when existing load
+//        if(!mNewNote){
+//            // show trashcan
+//            MenuInflater inflater = getMenuInflater();
+//            inflater.inflate(R.menu.menu_editor,menu);
+//        }
+        return super.onCreateOptionsMenu(menu);
+    }
 
-    private void saveAndReturn() {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
 
-        String title = editCourseText.getText().toString();
-        System.out.println("TITLE IS " + title);
+        if (item.getItemId() == android.R.id.home) {
+            Intent intent = new Intent(getApplicationContext(), CoursesForTermActivity.class);
+            intent.putExtra(KEY_TERM_ID, parentTerm.getTerm_id());
+            startActivity(intent);
+            finish();
+            return true;
+        } else if (item.toString().equals("Delete")) {
+//            mViewModel.deleteNote();
+            finish();
+        }
 
-        // to finish activity
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+//        super.onBackPressed();
+        Intent intent = new Intent(getApplicationContext(), CoursesForTermActivity.class);
+        intent.putExtra(KEY_TERM_ID, parentTerm.getTerm_id());
+        startActivity(intent);
         finish();
     }
 
+    public String ValidateCourse(Course courseToWorkWith) {
+
+        if (courseToWorkWith.getCourse_title() == null) {
+            return "Need Title for course.";
+        } else if (courseToWorkWith.getCourse_start_date() == null) {
+            return "Need Start Date for course.";
+
+        } else if (courseToWorkWith.getCourse_end_date() == null) {
+            return "Need End Date for course.";
+        } else if (courseToWorkWith.getCourse_end_date()
+                .compareTo(courseToWorkWith.getCourse_start_date()) < 0) {
+            return "Course can't end be before it starts!";
+        } else {
+            return null;
+        }
+
+    }
+
+    private void saveAndReturn() {
+        String validator = ValidateCourse(courseToWorkWith);
+        // course will not have id ....
+
+        if (validator == null) {
+
+            if (isUpdating) {
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Update Course?");
+                builder.setMessage("Would you like to update course info?");
+                builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        courseViewModel.saveCourse(courseToWorkWith);
+                        Intent intent = new Intent(getApplicationContext(), CoursesForTermActivity.class);
+                        intent.putExtra(KEY_TERM_ID, parentTerm.getTerm_id());
+                        startActivity(intent);
+                        finish();
+                    }
+                });
+                builder.setNegativeButton("Discard", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Intent intent = new Intent(getApplicationContext(), CoursesForTermActivity.class);
+                        intent.putExtra(KEY_TERM_ID, parentTerm.getTerm_id());
+                        startActivity(intent);
+                        finish();
+                    }
+                });
+                builder.show();
+
+            } else {
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Save Course?");
+                builder.setMessage("Would you like to save " + courseToWorkWith.getCourse_title());
+                builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        courseViewModel.saveCourse(courseToWorkWith);
+                        Intent intent = new Intent(getApplicationContext(), CoursesForTermActivity.class);
+                        intent.putExtra(KEY_TERM_ID, parentTerm.getTerm_id());
+                        startActivity(intent);
+//                    CourseActivity.super.onBackPressed();
+                        finish();
+                    }
+                });
+                builder.setNegativeButton("Discard", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Intent intent = new Intent(getApplicationContext(), CoursesForTermActivity.class);
+                        intent.putExtra(KEY_TERM_ID, parentTerm.getTerm_id());
+                        startActivity(intent);
+                        finish();
+                    }
+                });
+                builder.show();
+            }
+        } else {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Input Error!");
+            builder.setMessage(validator);
+            builder.show();
+
+        }
+
+
+    }
 }

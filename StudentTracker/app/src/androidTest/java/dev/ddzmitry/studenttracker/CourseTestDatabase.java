@@ -90,4 +90,20 @@ public class CourseTestDatabase {
         assertEquals(2,courses);
 
     }
+//    @Test
+//    public void updateTermCheckCourses(){
+//       Term q_Term = termDAO.getTermById(1);
+//        System.out.println(q_Term.toString());
+//    }
+//    @Test
+//    public void updateTermCheckCourses(){
+//        courseDAO.insertAllCourses(SampleData.getSamplCourses());
+//        Term q_Term = termDAO.getTermById(1);
+//        System.out.println(q_Term.toString());
+//        q_Term.setTerm_title("BOO");
+//        termDAO.insertTerm(q_Term);
+//
+//        LiveData<List<Course>> ld =  courseDAO.getCoursesByTermId(q_Term.getTerm_id());
+//
+//    }
 }
