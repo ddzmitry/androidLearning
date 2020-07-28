@@ -21,9 +21,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.lang.reflect.Executable;
@@ -33,6 +35,7 @@ import java.util.GregorianCalendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import dev.ddzmitry.studenttracker.database.CourseProgress;
 import dev.ddzmitry.studenttracker.models.Course;
 import dev.ddzmitry.studenttracker.models.Term;
 import dev.ddzmitry.studenttracker.view.CourseViewModel;
@@ -60,6 +63,11 @@ public class CourseActivity extends AppCompatActivity {
     @BindView(R.id.fab_delete_course)
     FloatingActionButton fab_delete_course;
 
+    @BindView(R.id.editCourseSpinner)
+    Spinner editCourseSpinner;
+
+    @BindView(R.id.editCourseMentorSpinner)
+
 
     // View Models
     private TermViewModel termViewModel;
@@ -71,10 +79,13 @@ public class CourseActivity extends AppCompatActivity {
 
     Boolean isUpdating = false;
     Boolean editingStart, editingEnd;
-
+    // for spinner
+    private ArrayAdapter<CourseProgress> courseProgressArrayAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_course_view);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -84,6 +95,8 @@ public class CourseActivity extends AppCompatActivity {
 
 
         initViewModel();
+        initSpinner();
+
 
         fab_delete_course.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -188,6 +201,12 @@ public class CourseActivity extends AppCompatActivity {
 
     }
 
+    private void initSpinner() {
+        // (CourseStatus) spCourseStatus.getSelectedItem();
+        courseProgressArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, CourseProgress.values());
+        editCourseSpinner.setAdapter(courseProgressArrayAdapter);
+    }
+
     private void initViewModel() {
         courseViewModel = ViewModelProviders.of(this).get(CourseViewModel.class);
         termViewModel = ViewModelProviders.of(this).get(TermViewModel.class);
@@ -226,9 +245,16 @@ public class CourseActivity extends AppCompatActivity {
             });
 
         } else if (intent.hasExtra(KEY_TERM_ID)) {
+            // New Course
             Integer term_id = extras.getInt(KEY_TERM_ID);
             buttonSaveUpdate.setText("Save");
             courseToWorkWith.setTerm_id(term_id);
+            courseToWorkWith.setCourseProgress(CourseProgress.PLANNED);
+            //set default
+            int position = courseProgressArrayAdapter.getPosition(CourseProgress.PLANNED);
+            editCourseSpinner.setSelection(position);
+            editCourseSpinner.setEnabled(false);
+
             new Thread(new Runnable() {
                 public void run() {
                     parentTerm = termViewModel.getTermById(term_id);
@@ -370,7 +396,6 @@ public class CourseActivity extends AppCompatActivity {
                 builder.show();
             }
         } else {
-
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Input Error!");
             builder.setMessage(validator);

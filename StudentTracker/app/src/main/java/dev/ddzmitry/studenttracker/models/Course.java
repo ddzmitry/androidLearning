@@ -88,8 +88,25 @@ public class Course {
         return course_end_date;
     }
 
+
     public void setCourse_end_date(Date course_end_date) {
         this.course_end_date = course_end_date;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public CourseProgress getCourseProgress() {
+        return courseProgress;
+    }
+
+    public void setCourseProgress(CourseProgress courseProgress) {
+        this.courseProgress = courseProgress;
     }
 
     @Override
@@ -100,6 +117,8 @@ public class Course {
                 ", course_title='" + course_title + '\'' +
                 ", course_start_date=" + course_start_date +
                 ", course_end_date=" + course_end_date +
+                ", note='" + note + '\'' +
+                ", courseProgress=" + courseProgress +
                 '}';
     }
 }

@@ -11,16 +11,41 @@
     tools:showIn="@layout/activity_course_view">
 
 
+    <Spinner
+        android:id="@+id/editCourseMentorSpinner"
+        android:layout_width="218dp"
+        android:layout_height="31dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/buttonSaveUpdate"
+        app:layout_constraintStart_toEndOf="@+id/textViewTermEnd"
+        app:layout_constraintTop_toBottomOf="@+id/editCourseSpinner"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="51dp"
+        android:layout_height="21dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="21dp"
+        android:text="Mentor"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/editCourseMentorSpinner"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
     <EditText
         android:id="@+id/editCourseText"
-        android:layout_width="246dp"
-        android:layout_height="57dp"
-        android:layout_marginTop="44dp"
+        android:layout_width="241dp"
+        android:layout_height="39dp"
+        android:layout_marginTop="8dp"
         android:ems="10"
         android:hint="Course Name"
-        android:inputType="textPersonName"
 
-        android:textSize="18sp"
+        android:inputType="textPersonName"
+        android:textSize="12sp"
         android:textStyle="bold|italic"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.851"
@@ -55,20 +80,18 @@
 
     <Button
         android:id="@+id/buttonSaveUpdate"
-        android:layout_width="118dp"
-        android:layout_height="49dp"
-        android:layout_marginTop="16dp"
+        android:layout_width="103dp"
+        android:layout_height="37dp"
         android:text="Button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editCourseEndDate" />
+        tools:layout_editor_absoluteY="266dp" />
 
     <TextView
         android:id="@+id/textViewTermName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:text="Course Name"
@@ -76,6 +99,7 @@
         android:textStyle="bold|italic"
         app:layout_constraintBottom_toBottomOf="@+id/editCourseText"
         app:layout_constraintEnd_toStartOf="@+id/editCourseText"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
@@ -84,11 +108,12 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="24dp"
         android:text="Start Date"
         android:textAlignment="center"
         android:textStyle="bold|italic"
         app:layout_constraintEnd_toStartOf="@+id/editCourseStartDate"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/editCourseStartDate" />
 
@@ -105,6 +130,27 @@
         app:layout_constraintEnd_toStartOf="@+id/editCourseEndDate"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <Spinner
+        android:id="@+id/editCourseSpinner"
+        android:layout_width="218dp"
+        android:layout_height="31dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toEndOf="@+id/textViewTermEnd"
+        app:layout_constraintTop_toBottomOf="@+id/editCourseEndDate" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="42dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="29dp"
+        android:text="Status"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/editCourseSpinner"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewTermEnd" />
 
 
 </android.support.constraint.ConstraintLayout>

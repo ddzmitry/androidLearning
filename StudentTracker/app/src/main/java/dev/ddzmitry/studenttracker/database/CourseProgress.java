@@ -6,15 +6,19 @@ package dev.ddzmitry.studenttracker.database;
 
 public enum CourseProgress {
     PLANNED {
-        public String getStatus(){ return "Planned to take";};
+        @Override
+        public String toString(){ return "Planned to take";};
     },
     COMPLETED {
-        public String getStatus(){ return "Completed";};
+        @Override
+        public String toString(){ return "Completed";};
     },
     IN_PROGRESS{
-        public String getStatus(){ return "Dropped";};
+        @Override
+        public String toString(){ return "In Progress";};
     },
     DROPPED{
-        public String getStatus(){ return "Planned to take";};
+        @Override
+        public String toString(){ return "Dropped";};
     }
 }

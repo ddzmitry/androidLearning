@@ -23,6 +23,7 @@ import java.util.concurrent.Executors;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import dev.ddzmitry.studenttracker.database.CourseProgress;
 import dev.ddzmitry.studenttracker.models.Course;
 import dev.ddzmitry.studenttracker.models.Term;
 import dev.ddzmitry.studenttracker.ui.CourseAdapter;
@@ -157,8 +158,14 @@ public class CoursesForTermActivity extends AppCompatActivity {
                 if (courses == null) {
                     System.out.println("COURSES ARE NULL");
                 } else {
+
                     coursesPerTerm.clear();
                     coursesPerTerm.addAll(courses);
+                    for (Course course : coursesPerTerm) {
+                        course.setCourseProgress(CourseProgress.IN_PROGRESS);
+                        System.out.println(course.getCourseProgress().toString());;
+
+                    }
 
                 }
                 if (courseAdapter == null) {

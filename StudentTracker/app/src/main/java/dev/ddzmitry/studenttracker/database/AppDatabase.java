@@ -15,9 +15,9 @@ import dev.ddzmitry.studenttracker.models.Term;
 
 // can add many through comma
 @Database(entities = {Term.class, Course.class}, version = 1)
-@TypeConverters(DateConverter.class)
+@TypeConverters({DateConverter.class, ProgressConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
-    public static final String DATABASE_NAME = "MAIN123.db";
+    public static final String DATABASE_NAME = "MAIN125.db";
     private static volatile AppDatabase instance;
 
     private static final Object LOCK = new Object();
