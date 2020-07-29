@@ -2,8 +2,11 @@ package dev.ddzmitry.studenttracker.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +19,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import dev.ddzmitry.studenttracker.CourseActivity;
 import dev.ddzmitry.studenttracker.R;
+import dev.ddzmitry.studenttracker.database.CourseProgress;
 import dev.ddzmitry.studenttracker.models.Course;
 import dev.ddzmitry.studenttracker.utilities.Utils;
 import  dev.ddzmitry.studenttracker.utilities.Constans;
@@ -36,7 +40,7 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.ViewHolder
         this.courses = courses;
         this.mContext = mContext;
     }
-
+    private Context context;
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.course_date_text)
@@ -47,6 +51,8 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.ViewHolder
         // Bind Edit button
         @BindView(R.id.fab_course)
         FloatingActionButton courseFab;
+        @BindView(R.id.in_image)
+        ConstraintLayout in_image;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -61,6 +67,10 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.ViewHolder
     public CourseAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.course_list_item_in_term,parent,false);
+
+
+//        view.setBackgroundColor(Color.argb(100, 144,238,144));
+        context = parent.getContext();
         return new ViewHolder(view);
     }
 
@@ -74,6 +84,27 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.ViewHolder
         holder.course_date_text.setText(String.format("%s - %s",
                 Utils.formatDate(course.getCourse_start_date()),
                 Utils.formatDate(course.getCourse_end_date())));
+
+//        holder.courseTextView.setBackgroundColor(Color.parseColor("#567845"));
+        System.out.println("IN onBindViewHolder");
+        System.out.println(course.toString());
+        System.out.println(course.getCourseProgress());
+        if(course.getCourseProgress() == CourseProgress.IN_PROGRESS  ){
+            holder.in_image.setBackgroundColor(ContextCompat.getColor(context,
+                    R.color.course_in_progress));
+        } else if (course.getCourseProgress() == CourseProgress.COMPLETED  ){
+            holder.in_image.setBackgroundColor(ContextCompat.getColor(context,
+                    R.color.course_success));
+        }else if (course.getCourseProgress() == CourseProgress.PLANNED  ){
+            holder.in_image.setBackgroundColor(ContextCompat.getColor(context,
+                    R.color.course_planned_to_take));
+        } else {
+            holder.in_image.setBackgroundColor(ContextCompat.getColor(context,
+                    R.color.course_dropped));
+        }
+
+
+
 
         holder.courseFab.setOnClickListener(new View.OnClickListener() {
             @Override

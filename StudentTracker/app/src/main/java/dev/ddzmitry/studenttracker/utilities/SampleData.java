@@ -34,15 +34,15 @@ public class SampleData {
     public static List<Course> getSamplCourses(){
 
         List<Course> courses = new ArrayList<>();
-        courses.add(new Course("A123",getDate(10000),getDate(1000000),1));
-        courses.add(new Course("B123",getDate(50000),getDate(6000000),2));
-        courses.add(new Course("C123",getDate(800),getDate(10000000),3));
-        courses.add(new Course("D123",getDate(10000),getDate(1000000),1));
-        courses.add(new Course("E123",getDate(50000),getDate(6000000),2));
-        courses.add(new Course("F123",getDate(800),getDate(10000000),3));
-        courses.add(new Course("G123",getDate(10000),getDate(1000000),1));
-        courses.add(new Course("H123",getDate(50000),getDate(6000000),2));
-        courses.add(new Course("I123",getDate(800),getDate(10000000),3));
+//        courses.add(new Course("A123",getDate(10000),getDate(1000000),1));
+//        courses.add(new Course("B123",getDate(50000),getDate(6000000),2));
+//        courses.add(new Course("C123",getDate(800),getDate(10000000),3));
+//        courses.add(new Course("D123",getDate(10000),getDate(1000000),1));
+//        courses.add(new Course("E123",getDate(50000),getDate(6000000),2));
+//        courses.add(new Course("F123",getDate(800),getDate(10000000),3));
+//        courses.add(new Course("G123",getDate(10000),getDate(1000000),1));
+//        courses.add(new Course("H123",getDate(50000),getDate(6000000),2));
+//        courses.add(new Course("I123",getDate(800),getDate(10000000),3));
         return courses;
     }
 

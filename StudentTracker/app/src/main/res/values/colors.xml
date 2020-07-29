@@ -4,4 +4,9 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="list_text_color">#333</color>
+<!--Colors for courses-->
+    <color name="course_success">#96da8a</color>
+    <color name="course_in_progress">#81d3e6</color>
+    <color name="course_planned_to_take">#938d8f</color>
+    <color name="course_dropped">#ec5063</color>
 </resources>

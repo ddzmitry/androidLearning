@@ -27,7 +27,7 @@ public class Course {
     private String course_title;
     private Date course_start_date;
     private Date course_end_date;
-
+    private String mentor;
     private String note;
     private CourseProgress courseProgress;
 
@@ -36,11 +36,12 @@ public class Course {
     }
 
     // Constructor to use for DB
-    public Course(String course_title, Date course_start_date, Date course_end_date,int term_id) {
+    public Course(String course_title, Date course_start_date, Date course_end_date,int term_id,CourseProgress courseProgress) {
         this.course_title = course_title;
         this.course_start_date = course_start_date;
         this.course_end_date = course_end_date;
         this.term_id = term_id;
+        this.courseProgress = courseProgress;
     }
 
     @Ignore
@@ -50,6 +51,26 @@ public class Course {
         this.course_title = course_title;
         this.course_start_date = course_start_date;
         this.course_end_date = course_end_date;
+    }
+
+    @Ignore
+    public Course(int course_id, int term_id, String course_title, Date course_start_date, Date course_end_date, String mentor, String note, CourseProgress courseProgress) {
+        this.course_id = course_id;
+        this.term_id = term_id;
+        this.course_title = course_title;
+        this.course_start_date = course_start_date;
+        this.course_end_date = course_end_date;
+        this.mentor = mentor;
+        this.note = note;
+        this.courseProgress = courseProgress;
+    }
+
+    public String getMentor() {
+        return mentor;
+    }
+
+    public void setMentor(String mentor) {
+        this.mentor = mentor;
     }
 
     public int getTerm_id() {
@@ -117,6 +138,7 @@ public class Course {
                 ", course_title='" + course_title + '\'' +
                 ", course_start_date=" + course_start_date +
                 ", course_end_date=" + course_end_date +
+                ", mentor=" + mentor +
                 ", note='" + note + '\'' +
                 ", courseProgress=" + courseProgress +
                 '}';

@@ -154,27 +154,19 @@ public class CoursesForTermActivity extends AppCompatActivity {
         final Observer<List<Course>> termsObserver = new Observer<List<Course>>() {
             @Override
             public void onChanged(@Nullable List<Course> courses) {
-
                 if (courses == null) {
                     System.out.println("COURSES ARE NULL");
                 } else {
-
                     coursesPerTerm.clear();
                     coursesPerTerm.addAll(courses);
-                    for (Course course : coursesPerTerm) {
-                        course.setCourseProgress(CourseProgress.IN_PROGRESS);
-                        System.out.println(course.getCourseProgress().toString());;
-
-                    }
-
                 }
                 if (courseAdapter == null) {
                     // Create adapter
                     courseAdapter = new CourseAdapter(coursesPerTerm, CoursesForTermActivity.this);
                     // Set Adapter to Display view
-                    for (Course course : coursesPerTerm) {
-                        System.out.println(course.toString());
-                    }
+//                    for (Course course : coursesPerTerm) {
+//                        System.out.println(course.toString());
+//                    }
                     coursesRecyclerView.setAdapter(courseAdapter);
                 } else {
                     // notify if data has changed
