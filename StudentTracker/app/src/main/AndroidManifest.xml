@@ -55,7 +55,7 @@
         <receiver android:name=".utilities.Alerting" />
 
         <activity
-            android:name=".AssesmentActivity"
+            android:name=".AssesmentsForCourseActivity"
             android:label="@string/title_activity_assesment"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>

@@ -6,6 +6,7 @@ import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 
+import dev.ddzmitry.studenttracker.models.Assessment;
 import dev.ddzmitry.studenttracker.models.Course;
 import dev.ddzmitry.studenttracker.models.Mentor;
 import dev.ddzmitry.studenttracker.models.Term;
@@ -15,8 +16,8 @@ import dev.ddzmitry.studenttracker.models.Term;
  */
 
 // can add many through comma
-@Database(entities = {Term.class, Course.class , Mentor.class}, version = 1)
-@TypeConverters({DateConverter.class, ProgressConverter.class})
+@Database(entities = {Term.class, Course.class , Mentor.class, Assessment.class}, version = 1)
+@TypeConverters({DateConverter.class, ProgressConverter.class, AssessmentConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
     public static final String DATABASE_NAME = "STUFF3333.db";
     private static volatile AppDatabase instance;
@@ -26,6 +27,8 @@ public abstract class AppDatabase extends RoomDatabase {
     // For each DAO
     public abstract TermDAO termDAO();
     public abstract CourseDAO courseDAO();
+    public abstract AssessmentDAO assesmentDAO();
+
     // Maybe For Continuous development if mentor needs to be as separated Entity
     public  abstract  MentorDAO mentorDAO();
     // Create DB

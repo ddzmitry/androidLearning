@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="dev.ddzmitry.studenttracker.AssesmentActivity">
+    tools:context="dev.ddzmitry.studenttracker.AssesmentsForCourseActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -13,7 +13,7 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_assesment" />
+    <include layout="@layout/content_view_assesments_on_course" />
 
 
     <android.support.design.widget.FloatingActionButton
