@@ -40,21 +40,4 @@ public class MentorViewModel extends AndroidViewModel {
         mentorRepository.insertMentor(mentor);
     }
 
-//    public void addSampleData(){
-//        mentorRepository.addSampleCourses();
-//    }
-//
-//    public void  addOnTermUpdates(List<Course> courses){
-//
-//        mentorRepository.addOnTermUpdates(courses);
-//    }
-//
-//    public void deleteCourse(){
-//        mentorRepository.deleteCourse(liveCourseData.getValue());
-//    }
-//
-//    public void removeAllData() {
-//        mentorRepository.removeAllCourses();
-//    }
-
 }

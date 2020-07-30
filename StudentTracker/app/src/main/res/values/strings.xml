@@ -4,4 +4,6 @@
     <string name="title_activity_summary">Summary</string>
     <string name="title_activity_view_term">View Courses Per Term</string>
     <string name="title_activity_course_view">Course View</string>
+    <string name="title_activity_mentor">Mentor Activity</string>
+    <string name="title_activity_assesment">AssesmentActivity</string>
 </resources>

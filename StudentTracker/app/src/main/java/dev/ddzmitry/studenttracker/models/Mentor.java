@@ -24,7 +24,7 @@ public class Mentor {
     private int mentor_id;
     private String FullName;
     private String emailAddress;
-
+    private String phone;
     private int course_id;
 
 
@@ -39,6 +39,14 @@ public class Mentor {
     @Ignore
     public Mentor() {
 
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public String getFullName() {
@@ -68,10 +76,9 @@ public class Mentor {
     @Override
     public String toString() {
         return "Mentor{" +
-                "mentor_id=" + mentor_id +
-                ", FullName='" + FullName + '\'' +
+                "FullName='" + FullName + '\'' +
                 ", emailAddress='" + emailAddress + '\'' +
-                ", course_id=" + course_id +
+                ", phone='" + phone + '\'' +
                 '}';
     }
 }

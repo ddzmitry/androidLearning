@@ -71,11 +71,14 @@ public class CourseActivity extends AppCompatActivity {
     @BindView(R.id.editCourseSpinner)
     Spinner editCourseSpinner;
 
+    // mentor props
     @BindView(R.id.editCourseMentorEmail)
     EditText editCourseMentorEmail;
-
     @BindView(R.id.editCourseMentorName)
     EditText editCourseMentorName;
+    @BindView(R.id.editCourseMentorPhone)
+    EditText editCourseMentorPhone;
+
 
     @BindView(R.id.editCourseNote)
     EditText editCourseNote;
@@ -91,7 +94,8 @@ public class CourseActivity extends AppCompatActivity {
     private DatePickerDialog.OnDateSetListener DatePickerDialogListener;
 
     Boolean isUpdating = false;
-    Boolean editingStart, editingEnd;
+    Boolean editingStart = false;
+    Boolean editingEnd = false;
     // for spinner
     private ArrayAdapter<CourseProgress> courseProgressArrayAdapter;
 
@@ -241,6 +245,27 @@ public class CourseActivity extends AppCompatActivity {
             }
         });
 
+        editCourseMentorPhone.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+                if (editable.toString().isEmpty()) {
+                    Toast.makeText(CourseActivity.this, "NEED TO HAVE VALUE", Toast.LENGTH_SHORT).show();
+                } else {
+                    mentorToWorkWith.setPhone(editable.toString());
+                }
+            }
+        });
 
 
         buttonSaveUpdate.setOnClickListener(new View.OnClickListener() {
@@ -262,7 +287,6 @@ public class CourseActivity extends AppCompatActivity {
         courseProgressArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, CourseProgress.values());
         editCourseSpinner.setAdapter(courseProgressArrayAdapter);
     }
-
 
 
     private void initViewModel() {
@@ -298,17 +322,19 @@ public class CourseActivity extends AppCompatActivity {
                         editCourseText.setText(course.getCourse_title().toString());
                         editCourseStartDate.setText(formatDate(course.getCourse_start_date()));
                         editCourseEndDate.setText(formatDate(course.getCourse_end_date()));
-
+                        editCourseNote.setText(course.getNote());
                         // Using ArrayList
-                        if(course.getMentor() !=null)
-                        {
+                        if (course.getMentor() != null) {
                             List<String> arrParams = new ArrayList<String>();
                             String str[] = course.getMentor().split("\\|");
                             arrParams = Arrays.asList(str);
-                            mentorToWorkWith.setFullName(arrParams.get(0) != null ? arrParams.get(0): "");
-                            mentorToWorkWith.setEmailAddress(arrParams.get(1) != null ? arrParams.get(1): "");
+                            mentorToWorkWith.setFullName(arrParams.get(0));
+                            mentorToWorkWith.setEmailAddress(arrParams.get(1));
+                            mentorToWorkWith.setPhone(arrParams.get(2));
                             editCourseMentorEmail.setText(mentorToWorkWith.getEmailAddress());
                             editCourseMentorName.setText(mentorToWorkWith.getFullName());
+                            editCourseMentorPhone.setText(mentorToWorkWith.getPhone());
+
                         }
 
                         editCourseNote.setText(course.getNote());
@@ -324,7 +350,6 @@ public class CourseActivity extends AppCompatActivity {
                     }
                 }
             });
-
 
 
         } else if (intent.hasExtra(KEY_TERM_ID)) {
@@ -371,13 +396,10 @@ public class CourseActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // only when existing load
-//        if(!mNewNote){
-//            // show trashcan
-//            MenuInflater inflater = getMenuInflater();
-//            inflater.inflate(R.menu.menu_editor,menu);
-//        }
-        return super.onCreateOptionsMenu(menu);
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.course_menu, menu);
+
+        return true;
     }
 
     @Override
@@ -439,8 +461,10 @@ public class CourseActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int id) {
 
                         courseToWorkWith.setCourseProgress((CourseProgress) editCourseSpinner.getSelectedItem());
-                        courseToWorkWith.setMentor(String.format("%s|%s",mentorToWorkWith.getFullName(),mentorToWorkWith.getEmailAddress()));
-
+                        courseToWorkWith.setMentor(String.format("%s|%s|%s",
+                                mentorToWorkWith.getFullName() != null ? mentorToWorkWith.getFullName() : "NA"
+                                , mentorToWorkWith.getEmailAddress() != null ? mentorToWorkWith.getEmailAddress() : "NA"
+                                , mentorToWorkWith.getPhone() != null ? mentorToWorkWith.getPhone() : "NA"));
                         courseToWorkWith.setNote(editCourseNote.getText().toString());
 
                         courseViewModel.saveCourse(courseToWorkWith);
@@ -468,7 +492,13 @@ public class CourseActivity extends AppCompatActivity {
                 builder.setMessage("Would you like to save " + courseToWorkWith.getCourse_title());
                 builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        courseToWorkWith.setMentor(String.format("%s|%s",mentorToWorkWith.getFullName(),mentorToWorkWith.getEmailAddress()));
+
+                        courseToWorkWith.setMentor(String.format("%s|%s|%s",
+                                mentorToWorkWith.getFullName() != null ? mentorToWorkWith.getFullName() : "NA"
+                                , mentorToWorkWith.getEmailAddress() != null ? mentorToWorkWith.getEmailAddress() : "NA"
+                                , mentorToWorkWith.getPhone() != null ? mentorToWorkWith.getPhone() : "NA"));
+
+                        courseToWorkWith.setNote(editCourseNote.getText().toString() );
                         courseViewModel.saveCourse(courseToWorkWith);
                         Intent intent = new Intent(getApplicationContext(), CoursesForTermActivity.class);
                         intent.putExtra(KEY_TERM_ID, parentTerm.getTerm_id());

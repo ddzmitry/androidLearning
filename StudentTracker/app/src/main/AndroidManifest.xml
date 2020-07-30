@@ -40,18 +40,24 @@
         </activity>
         <activity
             android:name=".CourseActivity"
-            android:label="@string/title_activity_course_view"
             android:exported="true"
+            android:label="@string/title_activity_course_view"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="dev.ddzmitry.studenttracker.MainActivity" />
         </activity>
         <activity
+            android:name=".TermActivity"
             android:label="Term View"
-            android:parentActivityName=".CoursesForTermActivity"
-            android:name=".TermActivity"></activity>
+            android:parentActivityName=".CoursesForTermActivity" />
+
         <receiver android:name=".utilities.Alerting" />
+
+        <activity
+            android:name=".AssesmentActivity"
+            android:label="@string/title_activity_assesment"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
