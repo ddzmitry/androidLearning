@@ -28,21 +28,59 @@ public class Assessment {
     // FK
     private int course_id;
     private String assessment_name;
-    private Date assessment_start_date;
-    private Date assessment_end_date;
+    private Date assessment_due_date;
     private AssessmentType assessmentType;
 
     @Ignore
     public Assessment() {
     }
 
-    public Assessment(int assessment_id, int course_id, String assessment_name, Date assessment_start_date, Date assessment_end_date, AssessmentType assessmentType) {
+    public Assessment(int assessment_id, int course_id, String assessment_name, Date assessment_due_date, AssessmentType assessmentType) {
         this.assessment_id = assessment_id;
         this.course_id = course_id;
         this.assessment_name = assessment_name;
-        this.assessment_start_date = assessment_start_date;
-        this.assessment_end_date = assessment_end_date;
+        this.assessment_due_date = assessment_due_date;
         this.assessmentType = assessmentType;
+    }
+
+
+    public int getAssessment_id() {
+        return assessment_id;
+    }
+    public void setAssessment_id(int assessment_id) {
+        this.assessment_id = assessment_id;
+    }
+
+    public int getCourse_id() {
+        return course_id;
+    }
+
+    public void setCourse_id(int course_id) {
+        this.course_id = course_id;
+    }
+
+    public String getAssessment_name() {
+        return assessment_name;
+    }
+
+    public void setAssessment_name(String assessment_name) {
+        this.assessment_name = assessment_name;
+    }
+
+    public AssessmentType getAssessmentType() {
+        return assessmentType;
+    }
+
+    public void setAssessmentType(AssessmentType assessmentType) {
+        this.assessmentType = assessmentType;
+    }
+
+    public Date getAssessment_due_date() {
+        return assessment_due_date;
+    }
+
+    public void setAssessment_due_date(Date assessment_due_date) {
+        this.assessment_due_date = assessment_due_date;
     }
 
     @Override
@@ -51,8 +89,7 @@ public class Assessment {
                 "assessment_id=" + assessment_id +
                 ", course_id=" + course_id +
                 ", assessment_name='" + assessment_name + '\'' +
-                ", assessment_start_date=" + assessment_start_date +
-                ", assessment_end_date=" + assessment_end_date +
+                ", assessment_due_date=" + assessment_due_date +
                 ", assessmentType=" + assessmentType +
                 '}';
     }

@@ -6,4 +6,5 @@
     <string name="title_activity_course_view">Course View</string>
     <string name="title_activity_mentor">Mentor Activity</string>
     <string name="title_activity_assesment">AssesmentActivity</string>
+    <string name="title_activity_assessment">AssessmentActivity</string>
 </resources>
