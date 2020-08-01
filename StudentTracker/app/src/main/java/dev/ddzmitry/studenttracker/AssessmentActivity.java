@@ -97,7 +97,7 @@ public class AssessmentActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int id) {
                         assessmentViewModel.deleteAssessment();
                         Intent intent = new Intent(getApplicationContext(), AssesmentsForCourseActivity.class);
-                        intent.putExtra(KEY_ASSESSMENT_ID, courseToWorkWith.getCourse_id());
+                        intent.putExtra(KEY_COURSE_ID, courseToWorkWith.getCourse_id());
                         startActivity(intent);
                         finish();
 
@@ -213,7 +213,7 @@ public class AssessmentActivity extends AppCompatActivity {
                         assessmentToWorkWith.setAssessmentType((AssessmentType) editAssessmentSpinner.getSelectedItem());
                         assessmentViewModel.saveAssessment(assessmentToWorkWith);
                         Intent intent = new Intent(getApplicationContext(), AssesmentsForCourseActivity.class);
-                        intent.putExtra(KEY_ASSESSMENT_ID, courseToWorkWith.getCourse_id());
+                        intent.putExtra(KEY_COURSE_ID, courseToWorkWith.getCourse_id());
                         startActivity(intent);
                         finish();
 
@@ -222,7 +222,7 @@ public class AssessmentActivity extends AppCompatActivity {
                 builder.setNegativeButton("Discard", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         Intent intent = new Intent(getApplicationContext(), AssesmentsForCourseActivity.class);
-                        intent.putExtra(KEY_ASSESSMENT_ID, courseToWorkWith.getCourse_id());
+                        intent.putExtra(KEY_COURSE_ID, courseToWorkWith.getCourse_id());
                         startActivity(intent);
                         finish();
                     }
@@ -241,7 +241,7 @@ public class AssessmentActivity extends AppCompatActivity {
 
                         assessmentViewModel.saveAssessment(assessmentToWorkWith);
                         Intent intent = new Intent(getApplicationContext(), AssesmentsForCourseActivity.class);
-                        intent.putExtra(KEY_ASSESSMENT_ID, courseToWorkWith.getCourse_id());
+                        intent.putExtra(KEY_COURSE_ID, courseToWorkWith.getCourse_id());
                         startActivity(intent);
                         finish();
                     }
@@ -249,7 +249,7 @@ public class AssessmentActivity extends AppCompatActivity {
                 builder.setNegativeButton("Discard", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         Intent intent = new Intent(getApplicationContext(), AssesmentsForCourseActivity.class);
-                        intent.putExtra(KEY_ASSESSMENT_ID, courseToWorkWith.getCourse_id());
+                        intent.putExtra(KEY_COURSE_ID, courseToWorkWith.getCourse_id());
                         startActivity(intent);
                         finish();
                     }

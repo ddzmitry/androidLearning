@@ -1,6 +1,9 @@
 package dev.ddzmitry.studenttracker;
 
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.View;
 import android.view.Menu;
@@ -49,22 +53,6 @@ public class MainActivity extends AppCompatActivity {
     private TasksAdapter tasksAdapter;
     private TermViewModel termViewModel;
     private TaskViewModel taskViewModel;
-//    private
-
-//    private void alertView( String message ) {
-//        AlertDialog.Builder dialog = new AlertDialog.Builder(context);
-//        dialog.setTitle( "Hello" )
-//                .setIcon(R.drawable.ic_launcher)
-//                .setMessage(message)
-////     .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-////      public void onClick(DialogInterface dialoginterface, int i) {
-////          dialoginterface.cancel();
-////          }})
-//                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialoginterface, int i) {
-//                    }
-//                }).show();
-//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,19 +76,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-//        AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
-//        alertDialog.setTitle("Alert");
-//        alertDialog.setMessage("Alert message to be shown");
-//        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-//                new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        dialog.dismiss();
-//                    }
-//                });
-//        alertDialog.show();
     }
 
+//    public void sendSms(final String receiverNumber, final String smsBody) {
+//        SmsManager smsManager = SmsManager.getDefault();
+//        smsManager.sendTextMessage(receiverNumber, null, smsBody, null, null);
+//    }
+
+
     private void initRecyclerView() {
+//        sendSms("7573180252","BAR");
         // Set Size to be the same
         TermRecyclerView.setHasFixedSize(true);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -108,6 +93,18 @@ public class MainActivity extends AppCompatActivity {
         // instanciate adapter
         tasksAdapter = new TasksAdapter(allTerms, this);
         TermRecyclerView.setAdapter(tasksAdapter);
+
+
+
+    }
+
+    private void Recievealert (){
+
+        Intent intent = new Intent(MainActivity.this,MessageReciever.class);
+        intent.putExtra("key","Hello");
+        PendingIntent sender = PendingIntent.getBroadcast(MainActivity.this,0,intent,0);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+//        long trigger =
 
     }
 
@@ -118,7 +115,6 @@ public class MainActivity extends AppCompatActivity {
             public void onChanged(@Nullable List<Term> terms) {
                 allTerms.clear();
                 allTerms.addAll(terms);
-
                 if (tasksAdapter == null) {
                     // Create adapter
                     tasksAdapter = new TasksAdapter(allTerms, MainActivity.this);

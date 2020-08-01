@@ -146,10 +146,7 @@ public class AssesmentsForCourseActivity extends AppCompatActivity {
                     } else{
                         assessmentsPerCourse.clear();
                         assessmentsPerCourse.addAll(assessmentsLiveData);
-//                        System.out.println("Assessments");
-//                        for (Assessment assessment : assessmentsPerCourse) {
-//                            System.out.println(assessment.toString());
-//                        }
+
 
                     }
                     if (assessmentAdapter == null){
@@ -171,36 +168,36 @@ public class AssesmentsForCourseActivity extends AppCompatActivity {
         if (extras == null) {
             System.out.println("NEW TERM");
         } else {
-//            int course_id = extras.getInt(KEY_COURSE_ID);
-            int course_id = 1;
-            System.out.println("COURSE ID IS" + course_id);
+            int course_id = extras.getInt(KEY_COURSE_ID);
 
             courseViewModel.loadCourseData(course_id);
 
             courseViewModel.liveCourseData.observe(this, new Observer<Course>() {
                 @Override
                 public void onChanged(@Nullable Course course) {
-                    courseToWorkWith = course;
-                    System.out.println("Course is: " + course.toString() );
-                    courseTitleText.setText(course.getCourse_title());
-                    courseDateText.setText(String.format("Start: %s End: %s",
-                            Utils.formatDate(course.getCourse_start_date()),
-                            Utils.formatDate(course.getCourse_end_date())));
+
+                    if (course != null){
+                        courseToWorkWith = course;
+//                    System.out.println("Course is: " + course.toString() );
+                        courseTitleText.setText(course.getCourse_title());
+                        courseDateText.setText(String.format("Start: %s End: %s",
+                                Utils.formatDate(course.getCourse_start_date()),
+                                Utils.formatDate(course.getCourse_end_date())));
+                    }
+
 
                 }
             });
 
-            new Thread(new Runnable() {
+            executor.execute(new Runnable() {
+                @Override
                 public void run() {
                     courseViewModel.loadCourseData(course_id);
                     assessmentViewModel.getAssessmentsByCourseId(course_id)
                             .observe(AssesmentsForCourseActivity.this,
                                     assessmentsObserver);
                 }
-            }).start();
-
-
-
+            });
 
 
 

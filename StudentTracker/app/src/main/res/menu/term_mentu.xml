@@ -7,6 +7,12 @@
         android:orderInCategory="100"
         android:title="Delete Term" />
     <item
+        android:id="@+id/notify_term"
+        android:orderInCategory="100"
+        android:title="Turn On Notifications" />
+
+
+    <item
         android:id="@+id/edit_term"
         android:orderInCategory="101"
         android:title="Edit Term"

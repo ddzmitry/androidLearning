@@ -1,8 +1,11 @@
 package dev.ddzmitry.studenttracker;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -321,7 +324,16 @@ public class TermActivity extends AppCompatActivity {
             deleteTerm();
 
         } else if (id == R.id.activate_term) {
-        } else if (id == R.id.view_all_courses) {
+        } else if (id == R.id.notify_term){
+
+            Intent intent=new Intent(TermActivity.this,MessageReciever.class);
+            PendingIntent sender= PendingIntent.getBroadcast(TermActivity.this,0,intent,0);
+            AlarmManager alarmManager=(AlarmManager)getSystemService(Context.ALARM_SERVICE);
+            System.out.println(termToWorkWith.toString());
+            alarmManager.set(AlarmManager.RTC_WAKEUP, termToWorkWith.getEnd_date().getTime(), sender);
+        }
+
+        else if (id == R.id.view_all_courses) {
             Log.i("TermActivity", "Going to check courses " + termToWorkWith.toString());
             //Intent intent = new Intent(mContext, CoursesForTermActivity.class);
             Intent intent = new Intent(getApplicationContext(), CoursesForTermActivity.class);

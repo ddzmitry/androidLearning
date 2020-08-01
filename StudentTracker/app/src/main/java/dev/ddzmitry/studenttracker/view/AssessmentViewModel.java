@@ -64,6 +64,7 @@ public class AssessmentViewModel extends AndroidViewModel {
 
     public void addOnCourseUpdates(List<Assessment> assessments) {
 
+
         assessmentRepository.addOnCourseUpdates(assessments);
     }
 

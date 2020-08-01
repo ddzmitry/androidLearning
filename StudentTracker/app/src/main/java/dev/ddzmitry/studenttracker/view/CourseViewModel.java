@@ -55,11 +55,13 @@ public class CourseViewModel extends AndroidViewModel {
         Course course_replacement = liveCourseData.getValue();
         if(course_replacement == null){
             System.out.println("NEW COURSE");
+            coursesRepository.insertCourse(updatedCourse);
         } else {
 //            note.setText(noteText.trim());
+            coursesRepository.insertCourse(liveCourseData.getValue());
         }
 
-        coursesRepository.insertCourse(updatedCourse);
+
     }
 
     public void addSampleData(){

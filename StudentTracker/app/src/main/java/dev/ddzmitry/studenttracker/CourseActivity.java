@@ -330,6 +330,10 @@ public class CourseActivity extends AppCompatActivity {
                             public void onChanged(@Nullable List<Assessment> assessments) {
                                 // this is if there is an update
                                 assessmentsPerCourse.addAll(assessments);
+                                for (Assessment assessment : assessmentsPerCourse) {
+                                    System.out.println("IN COURSE ACTIVITY");
+                                    System.out.println(assessment.toString());
+                                }
                             }
                         });
 
@@ -490,9 +494,17 @@ public class CourseActivity extends AppCompatActivity {
                                 , mentorToWorkWith.getPhone() != null ? mentorToWorkWith.getPhone() : "NA"));
                         courseToWorkWith.setNote(editCourseNote.getText().toString());
 
+
                         courseViewModel.saveCourse(courseToWorkWith);
                         // will keep all assessments even after course was updated
-                        assessmentViewModel.addOnCourseUpdates(assessmentsPerCourse);
+
+//                        assessmentViewModel.addOnCourseUpdates(assessmentsPerCourse);
+                        for (Assessment assessment : assessmentsPerCourse) {
+                            System.out.println("COURSE UPDATED SAVING ");
+                            assessmentViewModel.saveAssessment(assessment);
+                        }
+
+
                         Intent intent = new Intent(getApplicationContext(), CoursesForTermActivity.class);
                         intent.putExtra(KEY_TERM_ID, parentTerm.getTerm_id());
                         startActivity(intent);
