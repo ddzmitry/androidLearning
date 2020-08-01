@@ -9,4 +9,8 @@
     <color name="course_in_progress">#81d3e6</color>
     <color name="course_planned_to_take">#938d8f</color>
     <color name="course_dropped">#ec5063</color>
+    <!--Colors for assessments-->
+    <color name="pa_assessment">#36702c</color>
+    <color name="oa_assessment">#c9acb2</color>
+
 </resources>

@@ -56,8 +56,15 @@
 
         <activity
             android:name=".AssesmentsForCourseActivity"
+            android:parentActivityName=".CourseActivity"
             android:label="@string/title_activity_assesment"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:exported="true"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="dev.ddzmitry.studenttracker.CourseActivity" />
+        </activity>
+
         <activity
             android:name=".AssessmentActivity"
             android:exported="true"

@@ -128,8 +128,6 @@ public class CoursesForTermActivity extends AppCompatActivity {
 
     private void initViewModel() {
 
-
-
         termViewModel = ViewModelProviders.of(this).get(TermViewModel.class);
         courseViewModel = ViewModelProviders.of(this).get(CourseViewModel.class);
 //        courseViewModel.addSampleData();

@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -116,6 +117,8 @@ public class AssessmentActivity extends AppCompatActivity {
 
 
 
+
+
         editAssessmentDueDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -163,6 +166,31 @@ public class AssessmentActivity extends AppCompatActivity {
 
 
     }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(getApplicationContext(),
+                AssesmentsForCourseActivity.class);
+        intent.putExtra(KEY_COURSE_ID, courseToWorkWith.getCourse_id());
+        startActivity(intent);
+        finish();
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (item.getItemId() == android.R.id.home) {
+            Intent intent = new Intent(getApplicationContext(),
+                    AssesmentsForCourseActivity.class);
+            intent.putExtra(KEY_COURSE_ID, courseToWorkWith.getCourse_id());
+            startActivity(intent);
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
+
     public String ValidateAssessment(Assessment assessmentToWorkWith) {
         if (assessmentToWorkWith.getAssessment_name() == null) {
             return "Need Title for assessment.";
@@ -267,6 +295,7 @@ public class AssessmentActivity extends AppCompatActivity {
 
 
 
+
     private void initViewModel() {
         initSpinner();
         courseViewModel = ViewModelProviders.of(this).get(CourseViewModel.class);
@@ -325,7 +354,6 @@ public class AssessmentActivity extends AppCompatActivity {
                     int position = assessmentTypeArrayAdapter.getPosition(assessmentToWorkWith.getAssessmentType());
                     editAssessmentSpinner.setSelection(position);
                     editAssessmentSpinner.setEnabled(true);
-
                     courseViewModel.loadCourseData(assessment.getCourse_id());
                     courseViewModel.liveCourseData.observe(AssessmentActivity.this, new Observer<Course>() {
                         @Override

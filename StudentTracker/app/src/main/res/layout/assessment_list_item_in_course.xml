@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout
-    android:id="@+id/in_image"
+    android:id="@+id/in_image_assessment"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -9,12 +9,12 @@
     <!--This item is for recycler view to display term elements-->
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_course"
+        android:id="@+id/fab_assessment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
         android:layout_margin="15dp"
-        app:srcCompat="@drawable/term"
+        app:srcCompat="@drawable/write"
         tools:layout_editor_absoluteX="16dp"
         tools:layout_editor_absoluteY="16dp"
         app:fabSize="mini"
@@ -38,7 +38,7 @@
 
         android:textSize="@dimen/list_text_size"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/fab_course"
+        app:layout_constraintStart_toEndOf="@+id/fab_assessment"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -50,7 +50,7 @@
         android:layout_marginTop="8dp"
         android:text="TextView"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/fab_course"
+        app:layout_constraintStart_toEndOf="@+id/fab_assessment"
         app:layout_constraintTop_toBottomOf="@+id/assessment_text"
         app:layout_constraintVertical_bias="0.0" />
 

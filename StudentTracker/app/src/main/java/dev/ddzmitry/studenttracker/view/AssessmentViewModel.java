@@ -50,6 +50,7 @@ public class AssessmentViewModel extends AndroidViewModel {
 
     public LiveData<List<Assessment>> getAllAssessments() {
         return assessmentRepository.getAllAssessments();
+
     }
 
     public void saveAssessment(Assessment assessment) {

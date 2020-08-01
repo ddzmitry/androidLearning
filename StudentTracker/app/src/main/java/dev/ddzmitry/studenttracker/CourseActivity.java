@@ -39,9 +39,11 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import dev.ddzmitry.studenttracker.database.CourseProgress;
+import dev.ddzmitry.studenttracker.models.Assessment;
 import dev.ddzmitry.studenttracker.models.Course;
 import dev.ddzmitry.studenttracker.models.Mentor;
 import dev.ddzmitry.studenttracker.models.Term;
+import dev.ddzmitry.studenttracker.view.AssessmentViewModel;
 import dev.ddzmitry.studenttracker.view.CourseViewModel;
 import dev.ddzmitry.studenttracker.view.MentorViewModel;
 import dev.ddzmitry.studenttracker.view.TermViewModel;
@@ -87,6 +89,8 @@ public class CourseActivity extends AppCompatActivity {
     private TermViewModel termViewModel;
     private CourseViewModel courseViewModel;
     private MentorViewModel mentorViewModel;
+    private AssessmentViewModel assessmentViewModel;
+
     // Classes
     private Mentor mentorToWorkWith = new Mentor();
     private Course courseToWorkWith = new Course();
@@ -98,7 +102,7 @@ public class CourseActivity extends AppCompatActivity {
     Boolean editingEnd = false;
     // for spinner
     private ArrayAdapter<CourseProgress> courseProgressArrayAdapter;
-
+    private List<Assessment> assessmentsPerCourse = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -293,6 +297,8 @@ public class CourseActivity extends AppCompatActivity {
         initSpinner();
         courseViewModel = ViewModelProviders.of(this).get(CourseViewModel.class);
         termViewModel = ViewModelProviders.of(this).get(TermViewModel.class);
+        assessmentViewModel = ViewModelProviders.of(this).get(AssessmentViewModel.class);
+
         Bundle extras = getIntent().getExtras();
         Intent intent = getIntent();
 
@@ -318,6 +324,15 @@ public class CourseActivity extends AppCompatActivity {
                             }
                         }).start();
                         System.out.println("initViewModel");
+
+                        assessmentViewModel.getAssessmentsByCourseId(course.getCourse_id()).observe(CourseActivity.this, new Observer<List<Assessment>>() {
+                            @Override
+                            public void onChanged(@Nullable List<Assessment> assessments) {
+                                // this is if there is an update
+                                assessmentsPerCourse.addAll(assessments);
+                            }
+                        });
+
 
                         editCourseText.setText(course.getCourse_title().toString());
                         editCourseStartDate.setText(formatDate(course.getCourse_start_date()));
@@ -404,15 +419,23 @@ public class CourseActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         if (item.getItemId() == android.R.id.home) {
             Intent intent = new Intent(getApplicationContext(), CoursesForTermActivity.class);
             intent.putExtra(KEY_TERM_ID, parentTerm.getTerm_id());
             startActivity(intent);
             finish();
             return true;
-        } else if (item.toString().equals("Delete")) {
+        } else if(item.getItemId() == R.id.view_assessments){
+            Intent intent = new Intent(getApplicationContext(), AssesmentsForCourseActivity.class);
+            intent.putExtra(KEY_COURSE_ID, courseToWorkWith.getCourse_id());
+            startActivity(intent);
+            finish();
+            return true;
+        }
+
+        else if (item.toString().equals("Delete")) {
 //            mViewModel.deleteNote();
+            System.out.println("Hello");
             finish();
         }
 
@@ -468,7 +491,8 @@ public class CourseActivity extends AppCompatActivity {
                         courseToWorkWith.setNote(editCourseNote.getText().toString());
 
                         courseViewModel.saveCourse(courseToWorkWith);
-
+                        // will keep all assessments even after course was updated
+                        assessmentViewModel.addOnCourseUpdates(assessmentsPerCourse);
                         Intent intent = new Intent(getApplicationContext(), CoursesForTermActivity.class);
                         intent.putExtra(KEY_TERM_ID, parentTerm.getTerm_id());
                         startActivity(intent);

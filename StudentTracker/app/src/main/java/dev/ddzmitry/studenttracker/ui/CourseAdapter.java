@@ -41,6 +41,7 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.ViewHolder
         this.mContext = mContext;
     }
     private Context context;
+
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.course_date_text)
@@ -66,10 +67,9 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.ViewHolder
     @Override
     public CourseAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+
         View view = inflater.inflate(R.layout.course_list_item_in_term,parent,false);
 
-
-//        view.setBackgroundColor(Color.argb(100, 144,238,144));
         context = parent.getContext();
         return new ViewHolder(view);
     }
@@ -85,10 +85,6 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.ViewHolder
                 Utils.formatDate(course.getCourse_start_date()),
                 Utils.formatDate(course.getCourse_end_date())));
 
-//        holder.courseTextView.setBackgroundColor(Color.parseColor("#567845"));
-        System.out.println("IN onBindViewHolder");
-        System.out.println(course.toString());
-        System.out.println(course.getCourseProgress());
         if(course.getCourseProgress() == CourseProgress.IN_PROGRESS  ){
             holder.in_image.setBackgroundColor(ContextCompat.getColor(context,
                     R.color.course_in_progress));
