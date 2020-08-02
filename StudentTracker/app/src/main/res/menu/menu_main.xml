@@ -14,9 +14,4 @@
         android:title="Delete Sample Data"
         app:showAsAction="never" />
 
-    <item
-        android:id="@+id/action_get_summary"
-        android:orderInCategory="100"
-        android:title="Get Summary"
-        app:showAsAction="never" />
 </menu>

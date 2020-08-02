@@ -40,6 +40,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -79,11 +80,13 @@ public class CourseActivity extends AppCompatActivity {
     @BindView(R.id.buttonSaveUpdate)
     Button buttonSaveUpdate;
 
-    @BindView(R.id.fab_delete_course)
-    FloatingActionButton fab_delete_course;
-
     @BindView(R.id.editCourseSpinner)
     Spinner editCourseSpinner;
+    // Notification
+    @BindView(R.id.NotePhoneReciever)
+    EditText NotePhoneReciever;
+    @BindView(R.id.NotifyBtn)
+    Button NotifyBtn;
 
     // mentor props
     @BindView(R.id.editCourseMentorEmail)
@@ -129,33 +132,7 @@ public class CourseActivity extends AppCompatActivity {
 
         initViewModel();
 
-        fab_delete_course.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(CourseActivity.this);
-                builder.setTitle("Delete Course?");
-                builder.setMessage("Are you sure you want to delete course:  " + courseToWorkWith.getCourse_title());
-                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        courseViewModel.deleteCourse();
-                        deleteNotificationSchedule(courseToWorkWith, "start");
-                        deleteNotificationSchedule(courseToWorkWith, "end");
 
-                        Intent intent = new Intent(getApplicationContext(), CoursesForTermActivity.class);
-                        intent.putExtra(KEY_TERM_ID, parentTerm.getTerm_id());
-                        startActivity(intent);
-                        finish();
-                    }
-                });
-                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-
-                    }
-                });
-                builder.show();
-
-            }
-        });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
@@ -300,6 +277,21 @@ public class CourseActivity extends AppCompatActivity {
             }
         });
 
+        // Notification NotifyBtn
+        NotifyBtn.setOnClickListener(view -> {
+            Pattern p = Pattern.compile("(?:\\(\\d{3}\\)|\\d{3}[-]*)\\d{3}[-]*\\d{4}");
+            if (p.matcher(NotePhoneReciever.getText().toString()).matches()) {
+                System.out.println("VALID PHONE NUMBER");
+                smsSendMessage(NotePhoneReciever.getText().toString());
+            } else {
+                AlertDialog.Builder builder = new AlertDialog.Builder(CourseActivity.this);
+                builder.setTitle("Input Error!");
+                builder.setMessage("INVALID PHONE NUMBER");
+                builder.show();
+            }
+
+        });
+
     }
 
     // Disable Menu Options
@@ -310,9 +302,9 @@ public class CourseActivity extends AppCompatActivity {
             menu.clear();
         } else {
 
-            Integer term_id = extras.getInt(KEY_COURSE_ID);
+            Integer course_id = extras.getInt(KEY_COURSE_ID);
             // For notifications
-            String TERM_STRING_FOR_PREFS = String.format("COURSE_%s_%s", term_id, "start");
+            String TERM_STRING_FOR_PREFS = String.format("COURSE_%s_%s", course_id, "start");
             final SharedPreferences sharedPreferences =
                     CourseActivity.this.getSharedPreferences("dev.ddzmitry.studenttracker",
                             Context.MODE_PRIVATE);
@@ -343,7 +335,7 @@ public class CourseActivity extends AppCompatActivity {
 
         if (intent.hasExtra(KEY_COURSE_ID)) {
 
-            fab_delete_course.setVisibility(View.VISIBLE);
+
             isUpdating = true;
             Integer course_id = extras.getInt(KEY_COURSE_ID);
             buttonSaveUpdate.setText("Update");
@@ -476,7 +468,27 @@ public class CourseActivity extends AppCompatActivity {
             return true;
         } else if(item.getItemId() == R.id.delete_course){
             // TODO DELETE COURSE
+            AlertDialog.Builder builder = new AlertDialog.Builder(CourseActivity.this);
+            builder.setTitle("Delete Course?");
+            builder.setMessage("Are you sure you want to delete course:  " + courseToWorkWith.getCourse_title());
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    courseViewModel.deleteCourse();
+                    deleteNotificationSchedule(courseToWorkWith, "start");
+                    deleteNotificationSchedule(courseToWorkWith, "end");
+                    Intent intent = new Intent(getApplicationContext(), CoursesForTermActivity.class);
+                    intent.putExtra(KEY_TERM_ID, parentTerm.getTerm_id());
+                    startActivity(intent);
+                    finish();
 
+                }
+            });
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+
+                }
+            });
+            builder.show();
             return true;
         }
         else if(item.getItemId() == R.id.notify_course){
@@ -566,26 +578,22 @@ public class CourseActivity extends AppCompatActivity {
     /*
     * SMS
     * */
-    public void smsSendMessage() {
-//        TextView textView = (TextView) findViewById(R.id.number_to_call);
-        // Use format with "smsto:" and phone number to create smsNumber.
-//        String smsNumber = String.format("smsto: %s",
-//                textView.getText().toString());
-        // Find the sms_message view.
-//        EditText smsEditText = (EditText) findViewById(R.id.sms_message);
-//        // Get the text of the sms message.
-//        String sms = smsEditText.getText().toString();
-        // Create the intent.
+    public void smsSendMessage(String number) {
         Intent smsIntent = new Intent(Intent.ACTION_SENDTO);
-        // Set the data for the intent as the phone number.
-        smsIntent.setData(Uri.parse("smsto: 7573180252"));
-        // Add the message (sms) with the key ("sms_body").
-        smsIntent.putExtra("sms_body", "HELLO");
-        // If package resolves (target app installed), send intent.
+        smsIntent.setData(Uri.parse(
+                String.format("smsto: %s",
+                        number)));
+
+        String smsBody = String.format("Course %s \n Note: \n %s",
+                courseToWorkWith.getCourse_title(),
+                editCourseNote.getText().toString());
+
+        smsIntent.putExtra("sms_body", smsBody);
+
         if (smsIntent.resolveActivity(getPackageManager()) != null) {
             startActivity(smsIntent);
         } else {
-            Log.d("LOG", "Can't resolve app for ACTION_SENDTO Intent");
+            Toast.makeText(CourseActivity.this, "Can't send message", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -639,8 +647,20 @@ public class CourseActivity extends AppCompatActivity {
                                 , mentorToWorkWith.getPhone() != null ? mentorToWorkWith.getPhone() : "NA"));
                         courseToWorkWith.setNote(editCourseNote.getText().toString());
 //
-//                        createNotificationSchedule("start");
-//                        createNotificationSchedule("end");
+
+                        // check for if update needs for course
+                        String TERM_STRING_FOR_PREFS =
+                                String.format("COURSE_%s_%s", courseToWorkWith.getCourse_id(), "start");
+                        final SharedPreferences sharedPreferences =
+                                CourseActivity.this.getSharedPreferences("dev.ddzmitry.studenttracker",
+                                        Context.MODE_PRIVATE);
+                        if (sharedPreferences.getInt(TERM_STRING_FOR_PREFS, 0) != 0) {
+                            // add menu ite
+                            createNotificationSchedule("start");
+                            createNotificationSchedule("end");
+                        }
+
+
                         courseViewModel.saveCourse(courseToWorkWith);
                         // will keep all assessments even after course was updated
 

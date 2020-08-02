@@ -24,14 +24,4 @@
         android:id="@+id/include2"
         layout="@layout/content_assessment" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_delete_assesment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        app:layout_anchor="@+id/include2"
-        app:layout_anchorGravity="left|bottom"
-        app:srcCompat="@android:drawable/ic_delete" />
-
 </android.support.design.widget.CoordinatorLayout>

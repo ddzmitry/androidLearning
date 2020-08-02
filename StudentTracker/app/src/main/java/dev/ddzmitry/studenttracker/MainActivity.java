@@ -89,11 +89,12 @@ public class MainActivity extends AppCompatActivity {
         if(sharedPreferences.getInt(GLOBAL_COUNTER_CHANNELS,0) == 0){
             set_token_count();
         }
-        else{
-            // To see counter
-            Toast.makeText(this, "GLOBAL_COUNTER_CHANNELS is "
-                    + sharedPreferences.getInt(GLOBAL_COUNTER_CHANNELS,0), Toast.LENGTH_SHORT).show();
-        }
+//        else{
+//            // To see counter
+//            Toast.makeText(this, "GLOBAL_COUNTER_CHANNELS is "
+//                    + sharedPreferences.getInt(GLOBAL_COUNTER_CHANNELS,0), Toast.LENGTH_SHORT).show();
+//        }
+
         initRecyclerView();
         initViewModel();
         // Adding term
@@ -170,12 +171,7 @@ public class MainActivity extends AppCompatActivity {
             return true;
         } else if (id == R.id.action_delete_data){
             deleteAllData();
-        } else  if (id == R.id.action_get_summary){
-            Intent intent = new Intent(this,SummaryActivity.class);
-            startActivity(intent);
-//            System.out.println("Getting Summary");
         }
-
         return super.onOptionsItemSelected(item);
     }
 

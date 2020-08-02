@@ -18,11 +18,6 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/activate_term"
-        android:orderInCategory="101"
-        android:title="Activate Term"
-        app:showAsAction="never" />
-    <item
         android:id="@+id/view_all_courses"
         android:orderInCategory="101"
         android:title="View Courses"

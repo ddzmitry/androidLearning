@@ -1,10 +1,14 @@
 package dev.ddzmitry.studenttracker;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -16,6 +20,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -35,12 +40,19 @@ import butterknife.ButterKnife;
 import dev.ddzmitry.studenttracker.database.AssessmentType;
 import dev.ddzmitry.studenttracker.models.Assessment;
 import dev.ddzmitry.studenttracker.models.Course;
+import dev.ddzmitry.studenttracker.utilities.Utils;
 import dev.ddzmitry.studenttracker.view.AssessmentViewModel;
 import dev.ddzmitry.studenttracker.view.CourseViewModel;
 
+import static dev.ddzmitry.studenttracker.utilities.Constans.GLOBAL_COUNTER_CHANNELS;
 import static dev.ddzmitry.studenttracker.utilities.Constans.KEY_ASSESSMENT_ID;
 import static dev.ddzmitry.studenttracker.utilities.Constans.KEY_COURSE_ID;
 import static dev.ddzmitry.studenttracker.utilities.Constans.KEY_TERM_ID;
+import static dev.ddzmitry.studenttracker.utilities.Constans.NOTIFICATION_ALARM_ID;
+import static dev.ddzmitry.studenttracker.utilities.Constans.NOTIFICATION_ALERT;
+import static dev.ddzmitry.studenttracker.utilities.Constans.NOTIFICATION_DATE;
+import static dev.ddzmitry.studenttracker.utilities.Constans.NOTIFICATION_OBJECT;
+import static dev.ddzmitry.studenttracker.utilities.Constans.NOTIFICATION_OBJECT_ID;
 import static dev.ddzmitry.studenttracker.utilities.Utils.formatDate;
 
 public class AssessmentActivity extends AppCompatActivity {
@@ -57,8 +69,7 @@ public class AssessmentActivity extends AppCompatActivity {
     @BindView(R.id.editAssessmentSpinner)
     Spinner editAssessmentSpinner;
 
-    @BindView(R.id.fab_delete_assesment)
-    FloatingActionButton fab_delete_assesment;
+
 
 
     // view models
@@ -85,33 +96,8 @@ public class AssessmentActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         initViewModel();
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_delete_assesment);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(AssessmentActivity.this );
-                builder.setTitle("Delete Assessment?");
-                builder.setMessage("Would you like to delete assessment " + assessmentToWorkWith.getAssessment_name());
-                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        assessmentViewModel.deleteAssessment();
-                        Intent intent = new Intent(getApplicationContext(), AssesmentsForCourseActivity.class);
-                        intent.putExtra(KEY_COURSE_ID, courseToWorkWith.getCourse_id());
-                        startActivity(intent);
-                        finish();
 
-                    }
-                });
-                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-
-                    }
-                });
-                builder.show();
-
-            }
-        });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
@@ -131,11 +117,11 @@ public class AssessmentActivity extends AppCompatActivity {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                 Date date = new GregorianCalendar(year, month, day).getTime();
-                if (editingStart) {
+
                     editAssessmentDueDate.setText(formatDate(date));
                     editingStart = false;
                     assessmentToWorkWith.setAssessment_due_date(date);
-                }
+
             }
         };
 
@@ -175,19 +161,7 @@ public class AssessmentActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
 
-        if (item.getItemId() == android.R.id.home) {
-            Intent intent = new Intent(getApplicationContext(),
-                    AssesmentsForCourseActivity.class);
-            intent.putExtra(KEY_COURSE_ID, courseToWorkWith.getCourse_id());
-            startActivity(intent);
-            finish();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
 
 
@@ -211,6 +185,20 @@ public class AssessmentActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int id) {
 
                         assessmentToWorkWith.setAssessmentType((AssessmentType) editAssessmentSpinner.getSelectedItem());
+
+                        // updates for notifications
+                        String TERM_STRING_FOR_PREFS = String.format("ASSESSMENT_%s_%s",
+                                assessmentToWorkWith.getAssessment_id(), "due");
+                        final SharedPreferences sharedPreferences =
+                                AssessmentActivity.this.getSharedPreferences("dev.ddzmitry.studenttracker",
+                                        Context.MODE_PRIVATE);
+                        if (sharedPreferences.getInt(TERM_STRING_FOR_PREFS, 0) != 0) {
+
+                            createNotificationSchedule("due");
+
+                        }
+
+
                         assessmentViewModel.saveAssessment(assessmentToWorkWith);
                         Intent intent = new Intent(getApplicationContext(), AssesmentsForCourseActivity.class);
                         intent.putExtra(KEY_COURSE_ID, courseToWorkWith.getCourse_id());
@@ -293,6 +281,154 @@ public class AssessmentActivity extends AppCompatActivity {
 
     }
 
+    // set Menu
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.assessment_menu, menu);
+
+        return true;
+    }
+    // Disable Menu Options
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        Bundle extras = getIntent().getExtras();
+        if (extras.getInt(KEY_ASSESSMENT_ID) == 0) {
+            menu.clear();
+        } else {
+
+            Integer assessment_id = extras.getInt(KEY_ASSESSMENT_ID);
+            // For notifications
+            String TERM_STRING_FOR_PREFS = String.format("ASSESSMENT_%s_%s", assessment_id, "due");
+            final SharedPreferences sharedPreferences =
+                    AssessmentActivity.this.getSharedPreferences("dev.ddzmitry.studenttracker",
+                            Context.MODE_PRIVATE);
+            if (sharedPreferences.getInt(TERM_STRING_FOR_PREFS, 0) != 0) {
+                // add menu item
+                menu.findItem(R.id.notify_assessment).setEnabled(false);
+            }
+
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (item.getItemId() == android.R.id.home) {
+            Intent intent = new Intent(getApplicationContext(),
+                    AssesmentsForCourseActivity.class);
+            intent.putExtra(KEY_COURSE_ID, courseToWorkWith.getCourse_id());
+            startActivity(intent);
+            finish();
+            return true;
+        }else if(item.getItemId() == R.id.notify_assessment){
+            // TODO NOTIFY COURSE
+            createNotificationSchedule("due");
+            return true;
+        } else if(item.getItemId() == R.id.delete_assessment){
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(AssessmentActivity.this );
+            builder.setTitle("Delete Assessment?");
+            builder.setMessage("Would you like to delete assessment " + assessmentToWorkWith.getAssessment_name());
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    assessmentViewModel.deleteAssessment();
+                    Intent intent = new Intent(getApplicationContext(), AssesmentsForCourseActivity.class);
+                    intent.putExtra(KEY_COURSE_ID, courseToWorkWith.getCourse_id());
+                    deleteNotificationSchedule(assessmentToWorkWith, "due");
+                    startActivity(intent);
+                    finish();
+
+                }
+            });
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+
+                }
+            });
+            builder.show();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    /*
+    * NOTIFICATIONS
+    * */
+
+    public void saveSharedConfigurations(String type, Assessment _assesmentToWorkWith, Integer counterId) {
+
+        String COURSE_STRING_FOR_PREFS = String.format("ASSESSMENT_%s_%s",
+                _assesmentToWorkWith.getAssessment_id(), type);
+        final SharedPreferences sharedPreferences =
+                this.getSharedPreferences("dev.ddzmitry.studenttracker",
+                        Context.MODE_PRIVATE);
+        sharedPreferences.edit().putInt(COURSE_STRING_FOR_PREFS, counterId)
+                .apply();
+
+        Toast.makeText(this, String.format("ASSESSMENT_STRING_FOR_PREFS %s", COURSE_STRING_FOR_PREFS)
+                + sharedPreferences.getInt(COURSE_STRING_FOR_PREFS, 0), Toast.LENGTH_SHORT).show();
+
+    }
+
+    public void deleteNotificationSchedule(Assessment _assesmentToWorkWith, String type) {
+
+        String COURSE_STRING_FOR_PREFS = String.format("ASSESSMENT_%s_%s", _assesmentToWorkWith.getAssessment_id(), type);
+        final SharedPreferences sharedPreferences =
+                AssessmentActivity.this.getSharedPreferences("dev.ddzmitry.studenttracker",
+                        Context.MODE_PRIVATE);
+        if (sharedPreferences.getInt(COURSE_STRING_FOR_PREFS, 0) != 0) {
+            Integer channel_id = sharedPreferences.getInt(COURSE_STRING_FOR_PREFS, 0);
+            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            Intent myIntent = new Intent(getApplicationContext(), MessageReciever.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                    getApplicationContext(), channel_id, myIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+            alarmManager.cancel(pendingIntent);
+        }
+
+
+    }
+
+    public void createNotificationSchedule(String type) {
+        Integer channel_counter_for_start = getGlobalChannelCounter();
+        Intent intent_start = new Intent(AssessmentActivity.this, MessageReciever.class);
+        intent_start.putExtra(NOTIFICATION_OBJECT, String.format("Assessment for %s : %s ",
+                courseToWorkWith.getCourse_title(),
+                assessmentToWorkWith.getAssessment_name()));
+        intent_start.putExtra(NOTIFICATION_OBJECT_ID, assessmentToWorkWith.getAssessment_id());
+        intent_start.putExtra(NOTIFICATION_DATE, Utils.formatDate(assessmentToWorkWith.getAssessment_due_date()));
+
+        System.out.println("CREATING NOTIFICATION WITH");
+        System.out.println(assessmentToWorkWith.toString());
+
+        intent_start.putExtra(NOTIFICATION_ALERT, type);
+        intent_start.putExtra(NOTIFICATION_ALARM_ID, channel_counter_for_start);
+        PendingIntent sender = PendingIntent.getBroadcast(AssessmentActivity.this, channel_counter_for_start, intent_start, 0);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP,
+                assessmentToWorkWith.getAssessment_due_date().getTime(),
+                sender);
+        // save in local memory
+        saveSharedConfigurations(type, assessmentToWorkWith, channel_counter_for_start);
+        updateGlobalChannelCounter(channel_counter_for_start);
+
+    }
+    public Integer getGlobalChannelCounter() {
+        final SharedPreferences sharedPreferences = this.getSharedPreferences("dev.ddzmitry.studenttracker", Context.MODE_PRIVATE);
+        return sharedPreferences.getInt(GLOBAL_COUNTER_CHANNELS, 0);
+    }
+
+    // for channels
+    public void updateGlobalChannelCounter(Integer curr) {
+        System.out.println("updateGlobalChannelCounter CURRENT IS " + curr);
+        final SharedPreferences sharedPreferences = this
+                .getSharedPreferences("dev.ddzmitry.studenttracker",
+                        Context.MODE_PRIVATE);
+        sharedPreferences.edit().putInt(GLOBAL_COUNTER_CHANNELS, curr + 1).apply();
+    }
+
+
 
 
 
@@ -339,7 +475,7 @@ public class AssessmentActivity extends AppCompatActivity {
             isUpdating = true;
             // so we can delete it
             buttonSaveUpdate.setText("Update");
-            fab_delete_assesment.setVisibility(View.VISIBLE);
+
             assessmentViewModel.loadAssessmentData(assesment_id);
 
             assessmentViewModel
