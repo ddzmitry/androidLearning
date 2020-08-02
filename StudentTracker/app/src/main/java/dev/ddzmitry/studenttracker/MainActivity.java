@@ -59,13 +59,16 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void set_token_count(){
+
+
         final SharedPreferences sharedPreferences =
                 this.getSharedPreferences("dev.ddzmitry.studenttracker",
                         Context.MODE_PRIVATE);
         sharedPreferences.edit().putInt(GLOBAL_COUNTER_CHANNELS,1)
                 .apply();
-        Toast.makeText(this, "GLOBAL_COUNTER_CHANNELS is "
-                + sharedPreferences.getInt(GLOBAL_COUNTER_CHANNELS,0), Toast.LENGTH_SHORT).show();
+
+
+
     }
 
 
@@ -79,7 +82,16 @@ public class MainActivity extends AppCompatActivity {
         // Bind View
         ButterKnife.bind(this);
         // For performance boost
-        set_token_count();
+        SharedPreferences sharedPreferences = this.getSharedPreferences("dev.ddzmitry.studenttracker", Context.MODE_PRIVATE);
+        if(sharedPreferences.getInt(GLOBAL_COUNTER_CHANNELS,0) == 0){
+            set_token_count();
+        }
+        else{
+            // To see counter
+            Toast.makeText(this, "GLOBAL_COUNTER_CHANNELS is "
+                    + sharedPreferences.getInt(GLOBAL_COUNTER_CHANNELS,0), Toast.LENGTH_SHORT).show();
+        }
+
         initRecyclerView();
         initViewModel();
         // Adding term
