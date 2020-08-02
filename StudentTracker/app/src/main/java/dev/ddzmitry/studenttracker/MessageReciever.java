@@ -7,11 +7,19 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 import android.widget.Toast;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
+import static dev.ddzmitry.studenttracker.utilities.Constans.INTENT_LOGGER;
+import static dev.ddzmitry.studenttracker.utilities.Constans.NOTIFICATION_ALARM_ID;
+import static dev.ddzmitry.studenttracker.utilities.Constans.NOTIFICATION_ALERT;
 import static dev.ddzmitry.studenttracker.utilities.Constans.NOTIFICATION_CHANNEL;
+import static dev.ddzmitry.studenttracker.utilities.Constans.NOTIFICATION_DATE;
+import static dev.ddzmitry.studenttracker.utilities.Constans.NOTIFICATION_OBJECT;
+import static dev.ddzmitry.studenttracker.utilities.Constans.NOTIFICATION_OBJECT_ID;
 
 public class MessageReciever extends BroadcastReceiver {
 
@@ -21,18 +29,38 @@ public class MessageReciever extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         // Intent should have values for
         // Name, Type ,title
+        /*
+        *   NOTIFICATION_OBJECT = "notification_object";
+            NOTIFICATION_OBJECT_ID = "notification_object_id";
+            NOTIFICATION_DATE = "notification_date";
+            NOTIFICATION_ALERT = "notification_alert";
+            NOTIFICATION_ALARM_ID = "notification_alarm_id";
+        * */
+        String type = intent.getStringExtra(NOTIFICATION_OBJECT);
+        Integer id = intent.getIntExtra(NOTIFICATION_OBJECT_ID,0);
+        String date = intent.getStringExtra(NOTIFICATION_DATE);
+        String alert_end_start = intent.getStringExtra(NOTIFICATION_ALERT);
+        int alarmId =  intent.getIntExtra(NOTIFICATION_ALARM_ID,0);
 
+        Bundle bundle = intent.getExtras();
+        if (bundle != null) {
+            for (String key : bundle.keySet()) {
+                Log.e(INTENT_LOGGER, key + " : " + (bundle.get(key) != null ? bundle.get(key) : "NULL"));
+            }
+        }
 
-        Toast.makeText(context,"Notification",Toast.LENGTH_LONG).show();
+        String message = String.format("Your %s: ID %s is %s on %s",type,id,alert_end_start,date);
+        System.out.println(message);
 
+        Toast.makeText(context,"Notification from " + NOTIFICATION_CHANNEL,Toast.LENGTH_LONG).show();
         createNotificationChannel(context,NOTIFICATION_CHANNEL);
-
-        Notification n= new NotificationCompat.Builder(context, channel_id)
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setContentText("This is a test")
-                .setContentTitle("Test of Notification with an id of :"+Integer.toString(notificationID)).build();
+        Notification notification= new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL)
+                .setSmallIcon(R.drawable.ic_alert)
+                .setContentText(message)
+                .setContentTitle(String.format("%s notification",type)).build();
         NotificationManager notificationManager=(NotificationManager)context.getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.notify(notificationID++,n);
+
+        notificationManager.notify(alarmId,notification);
 
     }
     private void createNotificationChannel(Context context, String CHANNEL_ID) {

@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -21,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +40,7 @@ import dev.ddzmitry.studenttracker.view.CourseViewModel;
 import dev.ddzmitry.studenttracker.view.TaskViewModel;
 import dev.ddzmitry.studenttracker.view.TermViewModel;
 
+import static dev.ddzmitry.studenttracker.utilities.Constans.GLOBAL_COUNTER_CHANNELS;
 import static dev.ddzmitry.studenttracker.utilities.Constans.KEY_TERM_ID;
 
 public class MainActivity extends AppCompatActivity {
@@ -54,6 +57,18 @@ public class MainActivity extends AppCompatActivity {
     private TermViewModel termViewModel;
     private TaskViewModel taskViewModel;
 
+
+    public void set_token_count(){
+        final SharedPreferences sharedPreferences =
+                this.getSharedPreferences("dev.ddzmitry.studenttracker",
+                        Context.MODE_PRIVATE);
+        sharedPreferences.edit().putInt(GLOBAL_COUNTER_CHANNELS,1)
+                .apply();
+        Toast.makeText(this, "GLOBAL_COUNTER_CHANNELS is "
+                + sharedPreferences.getInt(GLOBAL_COUNTER_CHANNELS,0), Toast.LENGTH_SHORT).show();
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -64,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
         // Bind View
         ButterKnife.bind(this);
         // For performance boost
+        set_token_count();
         initRecyclerView();
         initViewModel();
         // Adding term
@@ -78,14 +94,8 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-//    public void sendSms(final String receiverNumber, final String smsBody) {
-//        SmsManager smsManager = SmsManager.getDefault();
-//        smsManager.sendTextMessage(receiverNumber, null, smsBody, null, null);
-//    }
-
 
     private void initRecyclerView() {
-//        sendSms("7573180252","BAR");
         // Set Size to be the same
         TermRecyclerView.setHasFixedSize(true);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -98,15 +108,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void Recievealert (){
 
-        Intent intent = new Intent(MainActivity.this,MessageReciever.class);
-        intent.putExtra("key","Hello");
-        PendingIntent sender = PendingIntent.getBroadcast(MainActivity.this,0,intent,0);
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-//        long trigger =
-
-    }
 
     private void initViewModel() {
 
