@@ -1,12 +1,17 @@
 package dev.ddzmitry.studenttracker;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -43,13 +48,20 @@ import dev.ddzmitry.studenttracker.models.Assessment;
 import dev.ddzmitry.studenttracker.models.Course;
 import dev.ddzmitry.studenttracker.models.Mentor;
 import dev.ddzmitry.studenttracker.models.Term;
+import dev.ddzmitry.studenttracker.utilities.Utils;
 import dev.ddzmitry.studenttracker.view.AssessmentViewModel;
 import dev.ddzmitry.studenttracker.view.CourseViewModel;
 import dev.ddzmitry.studenttracker.view.MentorViewModel;
 import dev.ddzmitry.studenttracker.view.TermViewModel;
 
+import static dev.ddzmitry.studenttracker.utilities.Constans.GLOBAL_COUNTER_CHANNELS;
 import static dev.ddzmitry.studenttracker.utilities.Constans.KEY_COURSE_ID;
 import static dev.ddzmitry.studenttracker.utilities.Constans.KEY_TERM_ID;
+import static dev.ddzmitry.studenttracker.utilities.Constans.NOTIFICATION_ALARM_ID;
+import static dev.ddzmitry.studenttracker.utilities.Constans.NOTIFICATION_ALERT;
+import static dev.ddzmitry.studenttracker.utilities.Constans.NOTIFICATION_DATE;
+import static dev.ddzmitry.studenttracker.utilities.Constans.NOTIFICATION_OBJECT;
+import static dev.ddzmitry.studenttracker.utilities.Constans.NOTIFICATION_OBJECT_ID;
 import static dev.ddzmitry.studenttracker.utilities.Utils.formatDate;
 
 
@@ -126,6 +138,9 @@ public class CourseActivity extends AppCompatActivity {
                 builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         courseViewModel.deleteCourse();
+                        deleteNotificationSchedule(courseToWorkWith, "start");
+                        deleteNotificationSchedule(courseToWorkWith, "end");
+
                         Intent intent = new Intent(getApplicationContext(), CoursesForTermActivity.class);
                         intent.putExtra(KEY_TERM_ID, parentTerm.getTerm_id());
                         startActivity(intent);
@@ -287,6 +302,30 @@ public class CourseActivity extends AppCompatActivity {
 
     }
 
+    // Disable Menu Options
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        Bundle extras = getIntent().getExtras();
+        if (extras.getInt(KEY_COURSE_ID) == 0) {
+            menu.clear();
+        } else {
+
+            Integer term_id = extras.getInt(KEY_COURSE_ID);
+            // For notifications
+            String TERM_STRING_FOR_PREFS = String.format("COURSE_%s_%s", term_id, "start");
+            final SharedPreferences sharedPreferences =
+                    CourseActivity.this.getSharedPreferences("dev.ddzmitry.studenttracker",
+                            Context.MODE_PRIVATE);
+            if (sharedPreferences.getInt(TERM_STRING_FOR_PREFS, 0) != 0) {
+                // add menu item
+                menu.findItem(R.id.notify_course).setEnabled(false);
+            }
+
+        }
+        return true;
+    }
+
+
     private void initSpinner() {
         courseProgressArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, CourseProgress.values());
         editCourseSpinner.setAdapter(courseProgressArrayAdapter);
@@ -435,15 +474,119 @@ public class CourseActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
             return true;
-        }
+        } else if(item.getItemId() == R.id.delete_course){
+            // TODO DELETE COURSE
 
-        else if (item.toString().equals("Delete")) {
-//            mViewModel.deleteNote();
-            System.out.println("Hello");
-            finish();
+            return true;
+        }
+        else if(item.getItemId() == R.id.notify_course){
+            // TODO NOTIFY COURSE
+            createNotificationSchedule("start");
+            createNotificationSchedule("end");
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    /*
+    * NOTIFICATIONS
+    * */
+
+    public void saveSharedConfigurations(String type, Course _courseToWorkWith, Integer counterId) {
+
+        String COURSE_STRING_FOR_PREFS = String.format("COURSE_%s_%s",
+                _courseToWorkWith.getCourse_id(), type);
+
+        final SharedPreferences sharedPreferences =
+                this.getSharedPreferences("dev.ddzmitry.studenttracker",
+                        Context.MODE_PRIVATE);
+        sharedPreferences.edit().putInt(COURSE_STRING_FOR_PREFS, counterId)
+                .apply();
+
+
+        Toast.makeText(this, String.format("COURSE_STRING_FOR_PREFS %s", COURSE_STRING_FOR_PREFS)
+                + sharedPreferences.getInt(COURSE_STRING_FOR_PREFS, 0), Toast.LENGTH_SHORT).show();
+
+    }
+
+    public void deleteNotificationSchedule(Course _courseToWorkWith, String type) {
+
+        String COURSE_STRING_FOR_PREFS = String.format("COURSE_%s_%s", _courseToWorkWith.getCourse_id(), type);
+        final SharedPreferences sharedPreferences =
+                CourseActivity.this.getSharedPreferences("dev.ddzmitry.studenttracker",
+                        Context.MODE_PRIVATE);
+        if (sharedPreferences.getInt(COURSE_STRING_FOR_PREFS, 0) != 0) {
+            Integer channel_id = sharedPreferences.getInt(COURSE_STRING_FOR_PREFS, 0);
+            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            Intent myIntent = new Intent(getApplicationContext(), MessageReciever.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                    getApplicationContext(), channel_id, myIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+            alarmManager.cancel(pendingIntent);
+        }
+
+
+    }
+
+    public void createNotificationSchedule(String type) {
+        Integer channel_counter_for_start = getGlobalChannelCounter();
+        Intent intent_start = new Intent(CourseActivity.this, MessageReciever.class);
+        intent_start.putExtra(NOTIFICATION_OBJECT, String.format("Course: %s ",courseToWorkWith.getCourse_title()));
+        intent_start.putExtra(NOTIFICATION_OBJECT_ID, courseToWorkWith.getCourse_id());
+        intent_start.putExtra(NOTIFICATION_DATE,
+                type.equals("start") ? Utils.formatDate(courseToWorkWith.getCourse_start_date())
+                        : Utils.formatDate(courseToWorkWith.getCourse_end_date()));
+        intent_start.putExtra(NOTIFICATION_ALERT, type == "start" ? "starting" : "ending");
+        intent_start.putExtra(NOTIFICATION_ALARM_ID, channel_counter_for_start);
+        PendingIntent sender = PendingIntent.getBroadcast(CourseActivity.this, channel_counter_for_start, intent_start, 0);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP,
+                type.equals("start") ? courseToWorkWith.getCourse_start_date().getTime() : courseToWorkWith.getCourse_end_date().getTime(),
+                sender);
+        // save in local memory
+        saveSharedConfigurations(type, courseToWorkWith, channel_counter_for_start);
+        updateGlobalChannelCounter(channel_counter_for_start);
+
+    }
+    public Integer getGlobalChannelCounter() {
+        final SharedPreferences sharedPreferences = this.getSharedPreferences("dev.ddzmitry.studenttracker", Context.MODE_PRIVATE);
+        return sharedPreferences.getInt(GLOBAL_COUNTER_CHANNELS, 0);
+    }
+
+    // for channels
+    public void updateGlobalChannelCounter(Integer curr) {
+        System.out.println("updateGlobalChannelCounter CURRENT IS " + curr);
+        final SharedPreferences sharedPreferences = this
+                .getSharedPreferences("dev.ddzmitry.studenttracker",
+                        Context.MODE_PRIVATE);
+        sharedPreferences.edit().putInt(GLOBAL_COUNTER_CHANNELS, curr + 1).apply();
+    }
+
+    /*
+    * SMS
+    * */
+    public void smsSendMessage() {
+//        TextView textView = (TextView) findViewById(R.id.number_to_call);
+        // Use format with "smsto:" and phone number to create smsNumber.
+//        String smsNumber = String.format("smsto: %s",
+//                textView.getText().toString());
+        // Find the sms_message view.
+//        EditText smsEditText = (EditText) findViewById(R.id.sms_message);
+//        // Get the text of the sms message.
+//        String sms = smsEditText.getText().toString();
+        // Create the intent.
+        Intent smsIntent = new Intent(Intent.ACTION_SENDTO);
+        // Set the data for the intent as the phone number.
+        smsIntent.setData(Uri.parse("smsto: 7573180252"));
+        // Add the message (sms) with the key ("sms_body").
+        smsIntent.putExtra("sms_body", "HELLO");
+        // If package resolves (target app installed), send intent.
+        if (smsIntent.resolveActivity(getPackageManager()) != null) {
+            startActivity(smsIntent);
+        } else {
+            Log.d("LOG", "Can't resolve app for ACTION_SENDTO Intent");
+        }
     }
 
     @Override
@@ -487,22 +630,25 @@ public class CourseActivity extends AppCompatActivity {
                 builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
 
+
+
                         courseToWorkWith.setCourseProgress((CourseProgress) editCourseSpinner.getSelectedItem());
                         courseToWorkWith.setMentor(String.format("%s|%s|%s",
                                 mentorToWorkWith.getFullName() != null ? mentorToWorkWith.getFullName() : "NA"
                                 , mentorToWorkWith.getEmailAddress() != null ? mentorToWorkWith.getEmailAddress() : "NA"
                                 , mentorToWorkWith.getPhone() != null ? mentorToWorkWith.getPhone() : "NA"));
                         courseToWorkWith.setNote(editCourseNote.getText().toString());
-
-
+//
+//                        createNotificationSchedule("start");
+//                        createNotificationSchedule("end");
                         courseViewModel.saveCourse(courseToWorkWith);
                         // will keep all assessments even after course was updated
 
 //                        assessmentViewModel.addOnCourseUpdates(assessmentsPerCourse);
-                        for (Assessment assessment : assessmentsPerCourse) {
-                            System.out.println("COURSE UPDATED SAVING ");
-                            assessmentViewModel.saveAssessment(assessment);
-                        }
+//                        for (Assessment assessment : assessmentsPerCourse) {
+//                            System.out.println("COURSE UPDATED SAVING ");
+//                            assessmentViewModel.saveAssessment(assessment);
+//                        }
 
 
                         Intent intent = new Intent(getApplicationContext(), CoursesForTermActivity.class);

@@ -11,7 +11,6 @@
         android:orderInCategory="100"
         android:title="Turn On Notifications" />
 
-
     <item
         android:id="@+id/edit_term"
         android:orderInCategory="101"

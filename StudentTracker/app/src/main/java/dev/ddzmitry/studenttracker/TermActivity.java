@@ -115,8 +115,8 @@ public class TermActivity extends AppCompatActivity {
         UtilityButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String validation =  ValidateTerm(termToWorkWith);
-                if(validation==null){
+                String validation = ValidateTerm(termToWorkWith);
+                if (validation == null) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(TermActivity.this);
                     builder.setTitle("Update/Save Term?");
                     builder.setMessage("Would you like to save/update term info?");
@@ -126,8 +126,7 @@ public class TermActivity extends AppCompatActivity {
                             courseViewModel.addOnTermUpdates(coursesPerTerm);
 
                             Bundle extras = getIntent().getExtras();
-                            if (extras != null)
-                            {
+                            if (extras != null) {
                                 createNotificationSchedule("start");
                                 createNotificationSchedule("end");
                             }
@@ -150,7 +149,6 @@ public class TermActivity extends AppCompatActivity {
                 }
 
 
-
             }
         });
 
@@ -158,27 +156,26 @@ public class TermActivity extends AppCompatActivity {
 
     // Disable Menu Options
     @Override
-    public boolean onPrepareOptionsMenu (Menu menu) {
+    public boolean onPrepareOptionsMenu(Menu menu) {
         Bundle extras = getIntent().getExtras();
-        if (extras == null)
-        {
+        if (extras == null) {
             menu.clear();
-        } else{
+        } else {
 
-           Integer term_id =  extras.getInt(KEY_TERM_ID);
+            Integer term_id = extras.getInt(KEY_TERM_ID);
             // For notifications
-            String TERM_STRING_FOR_PREFS = String.format("TERM_%s_%s",term_id,"start");
+            String TERM_STRING_FOR_PREFS = String.format("TERM_%s_%s", term_id, "start");
             final SharedPreferences sharedPreferences =
                     TermActivity.this.getSharedPreferences("dev.ddzmitry.studenttracker",
                             Context.MODE_PRIVATE);
-            if(sharedPreferences.getInt(TERM_STRING_FOR_PREFS,0) != 0){
+            if (sharedPreferences.getInt(TERM_STRING_FOR_PREFS, 0) != 0) {
                 // add menu item
-                 menu.findItem(R.id.notify_term).setEnabled(false);
+                menu.findItem(R.id.notify_term).setEnabled(false);
             }
 
         }
         return true;
-}
+    }
 
     private void initViewModel() {
 
@@ -193,10 +190,6 @@ public class TermActivity extends AppCompatActivity {
                     editTermStartDate.setText(formatDate(term.getStart_date()));
                     editTermEndDate.setText(formatDate(term.getEnd_date()));
                     termToWorkWith = termViewModel.liveTermData.getValue();
-
-
-
-
 
 
                     Log.i("TermActivity", "Working with Term: " + termToWorkWith.toString());
@@ -300,6 +293,11 @@ public class TermActivity extends AppCompatActivity {
             builder.setMessage("Are you sure you want to delete term:  " + termToWorkWith.getTerm_title());
             builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
+
+                    // Delete Notifications
+                    deleteNotificationSchedule(termToWorkWith, "start");
+                    deleteNotificationSchedule(termToWorkWith, "end");
+
                     termViewModel.deleteTerm();
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                     startActivity(intent);
@@ -360,8 +358,7 @@ public class TermActivity extends AppCompatActivity {
             deleteTerm();
 
         } else if (id == R.id.activate_term) {
-        }
-        else if (id == R.id.view_all_courses) {
+        } else if (id == R.id.view_all_courses) {
             Log.i("TermActivity", "Going to check courses " + termToWorkWith.toString());
             //Intent intent = new Intent(mContext, CoursesForTermActivity.class);
             Intent intent = new Intent(getApplicationContext(), CoursesForTermActivity.class);
@@ -371,8 +368,7 @@ public class TermActivity extends AppCompatActivity {
             finish();
 
 
-        }
-        else if (id == R.id.notify_term){
+        } else if (id == R.id.notify_term) {
             // for Start Term
             createNotificationSchedule("start");
             createNotificationSchedule("end");
@@ -386,53 +382,74 @@ public class TermActivity extends AppCompatActivity {
     *
     * */
 
-    public  void  saveSharedConfigurations(String type, Term _termToWorkWith, Integer counterId){
+    public void saveSharedConfigurations(String type, Term _termToWorkWith, Integer counterId) {
 
-        String TERM_STRING_FOR_PREFS = String.format("TERM_%s_%s",_termToWorkWith.getTerm_id(),type);
+        String TERM_STRING_FOR_PREFS = String.format("TERM_%s_%s", _termToWorkWith.getTerm_id(), type);
         final SharedPreferences sharedPreferences =
                 this.getSharedPreferences("dev.ddzmitry.studenttracker",
                         Context.MODE_PRIVATE);
-        sharedPreferences.edit().putInt(TERM_STRING_FOR_PREFS,counterId)
+        sharedPreferences.edit().putInt(TERM_STRING_FOR_PREFS, counterId)
                 .apply();
 
-        Toast.makeText(this, String.format("TERM_STRING_FOR_PREFS %s",TERM_STRING_FOR_PREFS)
-                    + sharedPreferences.getInt(TERM_STRING_FOR_PREFS,0), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, String.format("TERM_STRING_FOR_PREFS %s", TERM_STRING_FOR_PREFS)
+                + sharedPreferences.getInt(TERM_STRING_FOR_PREFS, 0), Toast.LENGTH_SHORT).show();
+
+    }
+
+    public void deleteNotificationSchedule(Term _termToWorkWith, String type) {
+
+        String TERM_STRING_FOR_PREFS = String.format("TERM_%s_%s", _termToWorkWith.getTerm_id(), type);
+        final SharedPreferences sharedPreferences =
+                TermActivity.this.getSharedPreferences("dev.ddzmitry.studenttracker",
+                        Context.MODE_PRIVATE);
+        if (sharedPreferences.getInt(TERM_STRING_FOR_PREFS, 0) != 0) {
+            Integer channel_id = sharedPreferences.getInt(TERM_STRING_FOR_PREFS, 0);
+
+            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            Intent myIntent = new Intent(getApplicationContext(), MessageReciever.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                    getApplicationContext(), channel_id, myIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+            alarmManager.cancel(pendingIntent);
+
+        }
+
 
     }
 
 
-
-    public void createNotificationSchedule(String type){
+    public void createNotificationSchedule(String type) {
         Integer channel_counter_for_start = getGlobalChannelCounter();
-        Intent intent_start=new Intent(TermActivity.this,MessageReciever.class);
+        Intent intent_start = new Intent(TermActivity.this, MessageReciever.class);
         intent_start.putExtra(NOTIFICATION_OBJECT, "Term");
         intent_start.putExtra(NOTIFICATION_OBJECT_ID, termToWorkWith.getTerm_id());
-        intent_start.putExtra(NOTIFICATION_DATE,type.equals("start") ? Utils.formatDate(termToWorkWith.getStart_date()) : Utils.formatDate(termToWorkWith.getEnd_date()) );
+        intent_start.putExtra(NOTIFICATION_DATE, type.equals("start") ? Utils.formatDate(termToWorkWith.getStart_date()) : Utils.formatDate(termToWorkWith.getEnd_date()));
         intent_start.putExtra(NOTIFICATION_ALERT, type == "start" ? "starting" : "ending");
         intent_start.putExtra(NOTIFICATION_ALARM_ID, channel_counter_for_start);
-        PendingIntent sender= PendingIntent.getBroadcast(TermActivity.this,channel_counter_for_start,intent_start,0);
-        AlarmManager alarmManager=(AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        PendingIntent sender = PendingIntent.getBroadcast(TermActivity.this, channel_counter_for_start, intent_start, 0);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP,
-                type.equals("start") ? termToWorkWith.getStart_date().getTime(): termToWorkWith.getEnd_date().getTime(),
+                type.equals("start") ? termToWorkWith.getStart_date().getTime() : termToWorkWith.getEnd_date().getTime(),
                 sender);
         // save in local memory
-        saveSharedConfigurations(type,termToWorkWith,channel_counter_for_start);
+        saveSharedConfigurations(type, termToWorkWith, channel_counter_for_start);
 
         updateGlobalChannelCounter(channel_counter_for_start);
 
     }
 
-    public Integer getGlobalChannelCounter (){
+    public Integer getGlobalChannelCounter() {
         final SharedPreferences sharedPreferences = this.getSharedPreferences("dev.ddzmitry.studenttracker", Context.MODE_PRIVATE);
-        return sharedPreferences.getInt(GLOBAL_COUNTER_CHANNELS,0);
+        return sharedPreferences.getInt(GLOBAL_COUNTER_CHANNELS, 0);
     }
+
     // for channels
-    public void updateGlobalChannelCounter (Integer curr){
+    public void updateGlobalChannelCounter(Integer curr) {
         System.out.println("updateGlobalChannelCounter CURRENT IS " + curr);
-                final SharedPreferences sharedPreferences = this
+        final SharedPreferences sharedPreferences = this
                 .getSharedPreferences("dev.ddzmitry.studenttracker",
                         Context.MODE_PRIVATE);
-        sharedPreferences.edit().putInt(GLOBAL_COUNTER_CHANNELS,curr+1).apply();
+        sharedPreferences.edit().putInt(GLOBAL_COUNTER_CHANNELS, curr + 1).apply();
     }
 
     /*

@@ -12,5 +12,11 @@
         android:orderInCategory="101"
         android:title="Delete Course"
         />
+    <item
+        android:id="@+id/notify_course"
+        android:orderInCategory="101"
+        android:title="Turn on Notifications"
+        />
+
 
 </menu>
