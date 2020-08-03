@@ -357,8 +357,8 @@ public class TermActivity extends AppCompatActivity {
 
             deleteTerm();
 
-        } else if (id == R.id.activate_term) {
-        } else if (id == R.id.view_all_courses) {
+        }
+         else if (id == R.id.view_all_courses) {
             Log.i("TermActivity", "Going to check courses " + termToWorkWith.toString());
             //Intent intent = new Intent(mContext, CoursesForTermActivity.class);
             Intent intent = new Intent(getApplicationContext(), CoursesForTermActivity.class);

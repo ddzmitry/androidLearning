@@ -9,4 +9,5 @@
     <string name="title_activity_assessment">AssessmentActivity</string>
     <string name="channel_name">Application Channel</string>
     <string name="channel_description">Application Channel Description</string>
+
 </resources>

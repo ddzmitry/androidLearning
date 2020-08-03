@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
     private TasksAdapter tasksAdapter;
     private TermViewModel termViewModel;
     private TaskViewModel taskViewModel;
+    private  CourseViewModel courseViewModel;
 
 
     public void set_token_count(){
@@ -146,6 +147,7 @@ public class MainActivity extends AppCompatActivity {
         };
         // pass class for view
         taskViewModel = ViewModelProviders.of(this).get(TaskViewModel.class);
+        courseViewModel = ViewModelProviders.of(this).get(CourseViewModel.class);
         taskViewModel.allTerms.observe(this, termsObserver);
     }
 
@@ -177,9 +179,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void addSampleData() {
         taskViewModel.addSampleData();
+        courseViewModel.addSampleData();
+
     }
     private void deleteAllData() {
         taskViewModel.removeAllData();
+        courseViewModel.removeAllData();
     }
 
 }

@@ -19,7 +19,7 @@ import dev.ddzmitry.studenttracker.models.Term;
 @Database(entities = {Term.class, Course.class , Mentor.class, Assessment.class}, version = 1)
 @TypeConverters({DateConverter.class, ProgressConverter.class, AssessmentConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
-    public static final String DATABASE_NAME = "NEW.db";
+    public static final String DATABASE_NAME = "C196REFRESHED.db";
     private static volatile AppDatabase instance;
 
     private static final Object LOCK = new Object();
