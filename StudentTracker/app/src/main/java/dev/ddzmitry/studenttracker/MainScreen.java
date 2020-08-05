@@ -1,7 +1,9 @@
 package dev.ddzmitry.studenttracker;
 
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
+import android.os.BatteryManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -44,12 +46,21 @@ public class MainScreen extends AppCompatActivity {
 
 
         });
+        // CORE
         Bitmap myBitmap = QRCode.from("https://dzmitry.dev/").bitmap();
         final ImageView myImage = (ImageView) findViewById(R.id.imageView);
         final ImageView iv = (ImageView) findViewById(R.id.imageView);
         System.out.println("BITMAP");
         System.out.println(myBitmap);
         iv.setImageBitmap(myBitmap);
+
+        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        Intent batteryStatus = getApplicationContext().registerReceiver(null, ifilter);
+        int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+        int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+
+        float c = level * 100 / (float)scale;
+        System.out.println(c);
 
     }
 
