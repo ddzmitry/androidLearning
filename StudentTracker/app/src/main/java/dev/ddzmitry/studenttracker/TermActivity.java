@@ -391,8 +391,10 @@ public class TermActivity extends AppCompatActivity {
         sharedPreferences.edit().putInt(TERM_STRING_FOR_PREFS, counterId)
                 .apply();
 
-        Toast.makeText(this, String.format("TERM_STRING_FOR_PREFS %s", TERM_STRING_FOR_PREFS)
-                + sharedPreferences.getInt(TERM_STRING_FOR_PREFS, 0), Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, String.format("TERM_STRING_FOR_PREFS %s", TERM_STRING_FOR_PREFS)
+//                + sharedPreferences.getInt(TERM_STRING_FOR_PREFS, 0), Toast.LENGTH_SHORT).show();
+
+        Toast.makeText(this, String.format("Setting up Notification for %s",_termToWorkWith.getTerm_title()), Toast.LENGTH_SHORT).show();
 
     }
 

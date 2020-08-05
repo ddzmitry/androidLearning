@@ -517,8 +517,10 @@ public class CourseActivity extends AppCompatActivity {
                 .apply();
 
 
-        Toast.makeText(this, String.format("COURSE_STRING_FOR_PREFS %s", COURSE_STRING_FOR_PREFS)
-                + sharedPreferences.getInt(COURSE_STRING_FOR_PREFS, 0), Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, String.format("COURSE_STRING_FOR_PREFS %s", COURSE_STRING_FOR_PREFS)
+//                + sharedPreferences.getInt(COURSE_STRING_FOR_PREFS, 0), Toast.LENGTH_SHORT).show();
+
+        Toast.makeText(this, String.format("Setting up Notification for %s",_courseToWorkWith.getCourse_title()), Toast.LENGTH_SHORT).show();
 
     }
 
@@ -663,13 +665,7 @@ public class CourseActivity extends AppCompatActivity {
 
                         courseViewModel.saveCourse(courseToWorkWith);
                         // will keep all assessments even after course was updated
-
-//                        assessmentViewModel.addOnCourseUpdates(assessmentsPerCourse);
-//                        for (Assessment assessment : assessmentsPerCourse) {
-//                            System.out.println("COURSE UPDATED SAVING ");
-//                            assessmentViewModel.saveAssessment(assessment);
-//                        }
-
+                        assessmentViewModel.addOnCourseUpdates(assessmentsPerCourse);
 
                         Intent intent = new Intent(getApplicationContext(), CoursesForTermActivity.class);
                         intent.putExtra(KEY_TERM_ID, parentTerm.getTerm_id());

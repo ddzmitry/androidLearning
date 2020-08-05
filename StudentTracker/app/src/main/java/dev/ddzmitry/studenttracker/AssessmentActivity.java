@@ -366,8 +366,10 @@ public class AssessmentActivity extends AppCompatActivity {
         sharedPreferences.edit().putInt(COURSE_STRING_FOR_PREFS, counterId)
                 .apply();
 
-        Toast.makeText(this, String.format("ASSESSMENT_STRING_FOR_PREFS %s", COURSE_STRING_FOR_PREFS)
-                + sharedPreferences.getInt(COURSE_STRING_FOR_PREFS, 0), Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, String.format("ASSESSMENT_STRING_FOR_PREFS %s", COURSE_STRING_FOR_PREFS)
+//                + sharedPreferences.getInt(COURSE_STRING_FOR_PREFS, 0), Toast.LENGTH_SHORT).show();
+
+        Toast.makeText(this, String.format("Setting up Notification for %s",_assesmentToWorkWith.getAssessment_name()), Toast.LENGTH_SHORT).show();
 
     }
 

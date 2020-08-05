@@ -179,12 +179,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void addSampleData() {
         taskViewModel.addSampleData();
-        courseViewModel.addSampleData();
+//        courseViewModel.addSampleData();
 
     }
     private void deleteAllData() {
         taskViewModel.removeAllData();
-        courseViewModel.removeAllData();
+//        courseViewModel.removeAllData();
     }
 
 }
