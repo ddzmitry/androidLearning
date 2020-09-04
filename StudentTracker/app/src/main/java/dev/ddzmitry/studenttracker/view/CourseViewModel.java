@@ -23,7 +23,6 @@ import dev.ddzmitry.studenttracker.models.Term;
 
 public class CourseViewModel extends AndroidViewModel {
     public LiveData<List<Course>> coursesPerTerm;
-
     private CoursesRepository coursesRepository;
     public MutableLiveData<Course> liveCourseData = new MutableLiveData<>();
     public LiveData<List<Course>> allCourses;
